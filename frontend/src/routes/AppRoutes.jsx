@@ -6,6 +6,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 // Layouts
 import { StudentLayout } from '../layouts/StudentLayout';
 import { MessAdminLayout } from '../layouts/MessAdminLayout';
+import { HostelAdminLayout } from '../layouts/HostelAdminLayout';
 import { SuperAdminLayout } from '../layouts/SuperAdminLayout';
 
 // Auth Pages
@@ -23,6 +24,13 @@ import { Complaints } from '../pages/student/Complaints';
 import { Achievements } from '../pages/student/Achievements';
 import { Statistics } from '../pages/student/Statistics';
 import { Profile } from '../pages/student/Profile';
+
+// Hostel Admin (Warden) Pages
+import { HostelAdminDashboard } from '../pages/hostelAdmin/HostelAdminDashboard';
+import { HostelStudents } from '../pages/hostelAdmin/HostelStudents';
+import { HostelMessOverview } from '../pages/hostelAdmin/HostelMessOverview';
+import { HostelComplaints } from '../pages/hostelAdmin/HostelComplaints';
+import { HostelRebates } from '../pages/hostelAdmin/HostelRebates';
 
 // Mess Admin Pages
 import { MessAdminDashboard } from '../pages/messAdmin/MessAdminDashboard';
@@ -46,6 +54,7 @@ const RoleBasedRedirect = () => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
   if (user.role === 'super_admin') return <Navigate to="/superadmin" replace />;
+  if (user.role === 'hostel_admin') return <Navigate to="/hostel-admin" replace />;
   if (user.role === 'mess_admin') return <Navigate to="/admin" replace />;
   return <Navigate to="/student" replace />;
 };
@@ -82,11 +91,27 @@ export const AppRoutes = () => {
         <Route path="profile" element={<Profile />} />
       </Route>
 
-      {/* Mess Admin Portal Routes (Restricted strictly to Mess Admin and Super Admin) */}
+      {/* Hostel Admin (Warden) Portal Routes */}
+      <Route
+        path="/hostel-admin"
+        element={
+          <ProtectedRoute allowedRoles={['hostel_admin', 'super_admin']}>
+            <HostelAdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<HostelAdminDashboard />} />
+        <Route path="students" element={<HostelStudents />} />
+        <Route path="mess-overview" element={<HostelMessOverview />} />
+        <Route path="complaints" element={<HostelComplaints />} />
+        <Route path="rebates" element={<HostelRebates />} />
+      </Route>
+
+      {/* Mess Admin Portal Routes (Restricted strictly to Mess Admin, Hostel Admin and Super Admin) */}
       <Route
         path="/admin"
         element={
-          <ProtectedRoute allowedRoles={['mess_admin', 'super_admin']}>
+          <ProtectedRoute allowedRoles={['mess_admin', 'hostel_admin', 'super_admin']}>
             <MessAdminLayout />
           </ProtectedRoute>
         }

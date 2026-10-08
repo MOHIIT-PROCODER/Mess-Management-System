@@ -12,14 +12,17 @@ const API_URL = import.meta.env.VITE_BACKEND_URL || '/api';
 
 // Hardcoded Admin Credentials (same as AuthContext)
 const ADMIN_CREDENTIALS = {
+  hostel_admin: [
+    { email: 'warden.bh7@campus.edu', password: 'warden123', data: { id: 'hostel-admin-07', full_name: 'Dr. S. K. Mahapatra (BH-7 Warden)', role: 'hostel_admin', hostel_name: 'BH-7 (Boys Hostel 7)', hostel_id: 'a1b2c3d4-0000-0000-0000-000000000007' } },
+    { email: 'warden.bh1@campus.edu', password: 'warden123', data: { id: 'hostel-admin-01', full_name: 'Prof. R. C. Mohanty (BH-1 Warden)', role: 'hostel_admin', hostel_name: 'Aryabhata Boys Hostel (BH-1)', hostel_id: 'a1b2c3d4-0000-0000-0000-000000000001' } },
+  ],
   mess_admin: [
-    { email: 'admin@mess.edu', password: 'admin123', data: { id: 'mess-admin-01', full_name: 'Rajesh Sharma', role: 'mess_admin', hostel_name: 'Aryabhata Boys Hostel', hostel_id: 'a1b2c3d4-0000-0000-0000-000000000001' } },
-    { email: 'warden@campus.edu', password: 'admin123', data: { id: 'mess-admin-02', full_name: 'Priya Singh', role: 'mess_admin', hostel_name: 'Gargi Girls Hostel', hostel_id: 'a1b2c3d4-0000-0000-0000-000000000002' } },
-    { email: 'bh7admin@mess.edu', password: 'admin123', data: { id: 'mess-admin-07', full_name: 'Alok Verma (BH-7)', role: 'mess_admin', hostel_name: 'BH-7 (Boys Hostel 7)', hostel_id: 'a1b2c3d4-0000-0000-0000-000000000007' } },
+    { email: 'admin@mess.edu', password: 'admin123', data: { id: 'mess-admin-01', full_name: 'Rajesh Sharma', role: 'mess_admin', hostel_name: 'Aryabhata Boys Hostel (BH-1)', hostel_id: 'a1b2c3d4-0000-0000-0000-000000000001' } },
+    { email: 'bh7admin@mess.edu', password: 'admin123', data: { id: 'mess-admin-07', full_name: 'Alok Verma (BH-7 Caterer)', role: 'mess_admin', hostel_name: 'BH-7 (Boys Hostel 7)', hostel_id: 'a1b2c3d4-0000-0000-0000-000000000007' } },
   ],
   super_admin: [
-    { email: 'director@campus.edu', password: 'super123', data: { id: 'super-admin-01', full_name: 'Dr. V. Ramanathan', role: 'super_admin', hostel_name: 'All Campuses (Directorate)' } },
-    { email: 'superadmin@campus.edu', password: 'super123', data: { id: 'super-admin-02', full_name: 'Dean Admin', role: 'super_admin', hostel_name: 'All Campuses' } },
+    { email: 'director@campus.edu', password: 'super123', data: { id: 'super-admin-01', full_name: 'Dr. V. Ramanathan (Chief Warden)', role: 'super_admin', hostel_name: 'All Campuses (Directorate)' } },
+    { email: 'superadmin@campus.edu', password: 'super123', data: { id: 'super-admin-02', full_name: 'Dean Student Affairs', role: 'super_admin', hostel_name: 'All Campuses' } },
   ]
 };
 
@@ -144,7 +147,9 @@ export const Login = () => {
         }
 
         login(match.data);
-        navigate(role === 'super_admin' ? '/superadmin' : '/admin');
+        if (role === 'super_admin') navigate('/superadmin');
+        else if (role === 'hostel_admin') navigate('/hostel-admin');
+        else navigate('/admin');
       }
     } catch (err) {
       setError('Login failed: ' + err.message);
@@ -159,48 +164,24 @@ export const Login = () => {
     setError('');
     try {
       if (quickRole === 'student') {
-        // Use demo student credentials from Supabase (if configured) or fallback
-        const { data, error: authError } = await supabase.auth.signInWithPassword({
+        const userData = {
+          id: 'student-demo-id',
           email: 'demo.student@campus.edu',
-          password: 'demo123456',
-        });
-
-        if (authError) {
-          // Fallback to mock if demo account doesn't exist
-          const userData = {
-            id: 'student-demo-id',
-            email: 'demo.student@campus.edu',
-            full_name: 'Aarav Patel',
-            roll_number: '21CS089',
-            room_number: '204-A',
-            role: 'student',
-            hostel_name: 'BH-7 (Boys Hostel 7)',
-            hostel_id: 'a1b2c3d4-0000-0000-0000-000000000007',
-          };
-          login(userData);
-        } else {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', data.user.id)
-            .single();
-
-          login({
-            id: data.user.id,
-            email: data.user.email,
-            full_name: profile?.full_name || 'Aarav Patel',
-            roll_number: profile?.roll_number || '21CS089',
-            room_number: profile?.room_number || '204-A',
-            role: 'student',
-            hostel_name: profile?.hostel_name || 'BH-7 (Boys Hostel 7)',
-            hostel_id: profile?.hostel_id || 'a1b2c3d4-0000-0000-0000-000000000007',
-            supabase_session: true,
-          });
-        }
+          full_name: 'Aarav Patel',
+          roll_number: '21CS089',
+          room_number: '204-A',
+          role: 'student',
+          hostel_name: 'BH-7 (Boys Hostel 7)',
+          hostel_id: 'a1b2c3d4-0000-0000-0000-000000000007',
+        };
+        login(userData);
         navigate('/student');
       } else if (quickRole === 'mess_admin') {
         login(ADMIN_CREDENTIALS.mess_admin[0].data);
         navigate('/admin');
+      } else if (quickRole === 'hostel_admin') {
+        login(ADMIN_CREDENTIALS.hostel_admin[0].data);
+        navigate('/hostel-admin');
       } else {
         login(ADMIN_CREDENTIALS.super_admin[0].data);
         navigate('/superadmin');
@@ -214,11 +195,14 @@ export const Login = () => {
 
   // Credential hints
   const getCredentialHint = () => {
+    if (role === 'hostel_admin') {
+      return { label: 'Hostel Admin / Warden credentials', hint: 'warden.bh7@campus.edu / warden123  or  warden.bh1@campus.edu / warden123' };
+    }
     if (role === 'mess_admin') {
-      return { label: 'Mess Admin credentials (contact director)', hint: 'admin@mess.edu / admin123  or  warden@campus.edu / admin123' };
+      return { label: 'Mess Admin / Caterer credentials', hint: 'admin@mess.edu / admin123  or  bh7admin@mess.edu / admin123' };
     }
     if (role === 'super_admin') {
-      return { label: 'Super Admin credentials (provided by IT)', hint: 'director@campus.edu / super123' };
+      return { label: 'Super Admin credentials (Campus Director)', hint: 'director@campus.edu / super123' };
     }
     return null;
   };
@@ -229,21 +213,21 @@ export const Login = () => {
     <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 relative overflow-hidden transition-colors py-10">
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="w-full max-w-lg p-6 sm:p-8 rounded-3xl glass-card space-y-6 border border-slate-200 dark:border-indigo-500/20 shadow-2xl relative z-10 bg-white dark:bg-slate-900/90">
+      <div className="w-full max-w-xl p-6 sm:p-8 rounded-3xl glass-card space-y-6 border border-slate-200 dark:border-indigo-500/20 shadow-2xl relative z-10 bg-white dark:bg-slate-900/90">
 
         {/* Header */}
         <div className="text-center space-y-2">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-indigo-500/30">
             <Utensils className="w-6 h-6" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Sign In to MessSphere</h2>
-          <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Campus Dining & QR Attendance Portal</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Sign In to Campus Mess Portal</h2>
+          <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Campus Dining, Attendance & Hostel Governance</p>
         </div>
 
-        {/* Role Selection Tabs */}
+        {/* Role Selection Tabs (4 Roles) */}
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Select Your Portal Role</label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
 
             {/* Student Tab */}
             <button
@@ -267,14 +251,30 @@ export const Login = () => {
               onClick={() => handleRoleSelect('mess_admin')}
               className={`p-2.5 rounded-2xl border flex flex-col items-center justify-center space-y-1 transition-all ${
                 role === 'mess_admin'
+                  ? 'bg-emerald-50 dark:bg-emerald-600/20 border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold shadow-sm ring-2 ring-emerald-500/30'
+                  : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300'
+              }`}
+            >
+              <div className={`p-1.5 rounded-xl ${role === 'mess_admin' ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>
+                <ChefHat className="w-4 h-4" />
+              </div>
+              <span className="text-[11px] font-bold">Mess Admin</span>
+            </button>
+
+            {/* Hostel Admin (Warden) Tab */}
+            <button
+              type="button"
+              onClick={() => handleRoleSelect('hostel_admin')}
+              className={`p-2.5 rounded-2xl border flex flex-col items-center justify-center space-y-1 transition-all ${
+                role === 'hostel_admin'
                   ? 'bg-purple-50 dark:bg-purple-600/20 border-purple-600 text-purple-600 dark:text-purple-400 font-bold shadow-sm ring-2 ring-purple-500/30'
                   : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300'
               }`}
             >
-              <div className={`p-1.5 rounded-xl ${role === 'mess_admin' ? 'bg-purple-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>
-                <ChefHat className="w-4 h-4" />
+              <div className={`p-1.5 rounded-xl ${role === 'hostel_admin' ? 'bg-purple-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>
+                <ShieldCheck className="w-4 h-4" />
               </div>
-              <span className="text-[11px] font-bold">Mess Admin</span>
+              <span className="text-[11px] font-bold">Hostel Admin</span>
             </button>
 
             {/* Super Admin Tab */}
@@ -380,7 +380,7 @@ export const Login = () => {
               </>
             ) : (
               <>
-                <span>Sign In to {role === 'super_admin' ? 'Super Admin' : role === 'mess_admin' ? 'Mess Admin' : 'Student'} Portal</span>
+                <span>Sign In to {role === 'super_admin' ? 'Super Admin' : role === 'hostel_admin' ? 'Hostel Warden' : role === 'mess_admin' ? 'Mess Admin' : 'Student'} Portal</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
@@ -391,29 +391,36 @@ export const Login = () => {
         <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
           <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center space-x-1">
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span>Quick Demo Access</span>
+            <span>Quick 1-Click Demo Logins</span>
           </p>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <button
               onClick={() => handleQuickLogin('student')}
               disabled={loading}
-              className="px-2.5 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/50 text-[10px] font-bold hover:bg-indigo-100 transition-colors disabled:opacity-60"
+              className="px-2 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/50 text-[10px] font-bold hover:bg-indigo-100 transition-colors disabled:opacity-60 text-center"
             >
-              🎓 Student Demo
+              🎓 Student
             </button>
             <button
               onClick={() => handleQuickLogin('mess_admin')}
               disabled={loading}
-              className="px-2.5 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-700/50 text-[10px] font-bold hover:bg-purple-100 transition-colors disabled:opacity-60"
+              className="px-2 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/50 text-[10px] font-bold hover:bg-emerald-100 transition-colors disabled:opacity-60 text-center"
             >
-              👨‍🍳 Admin Demo
+              🍳 Mess Admin
+            </button>
+            <button
+              onClick={() => handleQuickLogin('hostel_admin')}
+              disabled={loading}
+              className="px-2 py-2 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-700/50 text-[10px] font-bold hover:bg-purple-100 transition-colors disabled:opacity-60 text-center"
+            >
+              🏢 BH-7 Warden
             </button>
             <button
               onClick={() => handleQuickLogin('super_admin')}
               disabled={loading}
-              className="px-2.5 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700/50 text-[10px] font-bold hover:bg-amber-100 transition-colors disabled:opacity-60"
+              className="px-2 py-2 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700/50 text-[10px] font-bold hover:bg-amber-100 transition-colors disabled:opacity-60 text-center"
             >
-              🛡️ Super Demo
+              👑 Director
             </button>
           </div>
         </div>

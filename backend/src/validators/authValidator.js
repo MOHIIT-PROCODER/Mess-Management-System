@@ -9,7 +9,7 @@ const registerSchema = Joi.object({
   phone: Joi.string().optional().allow(''),
   phone_number: Joi.string().optional().allow(''),
   hostel_name: Joi.string().optional().allow(''),
-  role: Joi.string().valid('student', 'mess_admin', 'super_admin').default('student'),
+  role: Joi.string().valid('student', 'hostel_admin', 'mess_admin', 'super_admin').default('student'),
   hostel_id: Joi.string().optional().allow(null, ''),
   room_number: Joi.string().optional().allow('')
 });

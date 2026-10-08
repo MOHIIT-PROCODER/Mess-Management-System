@@ -20,6 +20,14 @@ export const Sidebar = () => {
     { to: '/student/profile', label: 'Profile', icon: User }
   ];
 
+  const hostelAdminLinks = [
+    { to: '/hostel-admin', label: 'Warden Dashboard', icon: LayoutDashboard },
+    { to: '/hostel-admin/students', label: 'Hostel Residents', icon: User },
+    { to: '/hostel-admin/mess-overview', label: 'Mess Operations', icon: Calendar },
+    { to: '/hostel-admin/complaints', label: 'Grievances & Actions', icon: MessageSquare },
+    { to: '/hostel-admin/rebates', label: 'Rebate Approvals', icon: FileText }
+  ];
+
   const messAdminLinks = [
     { to: '/admin', label: 'Live Dashboard', icon: LayoutDashboard },
     { to: '/admin/menu', label: 'Food Menu Manager', icon: Calendar },
@@ -37,7 +45,14 @@ export const Sidebar = () => {
     { to: '/superadmin/settings', label: 'System Settings', icon: Settings }
   ];
 
-  const links = role === 'super_admin' ? superAdminLinks : role === 'mess_admin' ? messAdminLinks : studentLinks;
+  const links =
+    role === 'super_admin'
+      ? superAdminLinks
+      : role === 'hostel_admin'
+      ? hostelAdminLinks
+      : role === 'mess_admin'
+      ? messAdminLinks
+      : studentLinks;
 
   return (
     <aside className="w-64 p-4 hidden md:flex flex-col justify-between min-h-[calc(100vh-61px)] bg-white dark:bg-slate-900/90 border-r border-slate-200 dark:border-slate-800 transition-colors duration-300">

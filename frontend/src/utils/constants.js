@@ -11,6 +11,7 @@ export const MEAL_TYPES = {
 
 export const USER_ROLES = {
   STUDENT: "student",
+  HOSTEL_ADMIN: "hostel_admin",
   MESS_ADMIN: "mess_admin",
   SUPER_ADMIN: "super_admin"
 };
