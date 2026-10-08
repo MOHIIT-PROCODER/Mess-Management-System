@@ -32,7 +32,6 @@ import { FeedbackManagement } from '../pages/messAdmin/FeedbackManagement';
 import { ComplaintManagement } from '../pages/messAdmin/ComplaintManagement';
 import { StudentManagement } from '../pages/messAdmin/StudentManagement';
 import { Analytics } from '../pages/messAdmin/Analytics';
-import { AIInsights } from '../pages/messAdmin/AIInsights';
 import { Reports } from '../pages/messAdmin/Reports';
 import { Settings } from '../pages/messAdmin/Settings';
 
@@ -100,7 +99,6 @@ export const AppRoutes = () => {
         <Route path="compliments" element={<ComplaintManagement />} />
         <Route path="students" element={<StudentManagement />} />
         <Route path="analytics" element={<Analytics />} />
-        <Route path="ai-insights" element={<AIInsights />} />
         <Route path="reports" element={<Reports />} />
         <Route path="settings" element={<Settings />} />
       </Route>

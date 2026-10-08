@@ -26,7 +26,6 @@ export const Sidebar = () => {
     { to: '/admin/attendance', label: 'Attendance Counter', icon: QrCode },
     { to: '/admin/feedback', label: 'Student Ratings', icon: MessageSquare },
     { to: '/admin/complaints', label: 'Chef Compliments', icon: ChefHat },
-    { to: '/admin/ai-insights', label: 'AI Waste Insights', icon: Cpu },
     { to: '/admin/reports', label: 'Reports Generator', icon: FileText }
   ];
 
