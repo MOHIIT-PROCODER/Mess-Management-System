@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Flame, Sparkles, ChevronRight, LayoutGrid, CalendarDays, Utensils } from 'lucide-react';
 import { MealCard } from './MealCard';
 import { getCurrentMeal } from '../../../utils/dateUtils';
 import { Link } from 'react-router-dom';
+import { menuService } from '../../../services/menuService';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -50,8 +51,6 @@ const DEFAULT_WEEKLY_MENU = {
     { meal: 'dinner', time: '07:30 PM - 09:45 PM', items: ['Dum Aloo Kashmiri', 'Laccha Paratha', 'Peas Pulao', 'Ice Cream'], calories: 820, is_special: false }
   ]
 };
-
-import { menuService } from '../../../services/menuService';
 
 export const TodayMenu = ({ menuItems = [] }) => {
   const activeMeal = getCurrentMeal();

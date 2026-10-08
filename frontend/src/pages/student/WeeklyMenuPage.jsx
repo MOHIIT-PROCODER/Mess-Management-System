@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Calendar, Clock, Flame, Search, Sparkles, Filter,
   Coffee, Utensils, Cookie, Moon, Star, CheckCircle, Info
 } from 'lucide-react';
 import { MealCard } from '../../components/student/dashboard/MealCard';
 import { getCurrentMeal } from '../../utils/dateUtils';
+import { menuService } from '../../services/menuService';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const MEALS = ['Breakfast', 'Lunch', 'Snacks', 'Dinner'];
@@ -53,8 +54,6 @@ const DEFAULT_WEEKLY_TIMETABLE = {
     Dinner:    { time: '07:30 PM - 09:45 PM', items: ['Dum Aloo Kashmiri', 'Laccha Paratha', 'Peas Pulao', 'Ice Cream'], calories: 820, is_special: false, image_url: null },
   },
 };
-
-import { menuService } from '../../services/menuService';
 
 export const WeeklyMenuPage = () => {
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
