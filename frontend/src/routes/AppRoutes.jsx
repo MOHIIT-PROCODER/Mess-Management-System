@@ -27,6 +27,7 @@ import { Profile } from '../pages/student/Profile';
 
 // Hostel Admin (Warden) Pages
 import { HostelAdminDashboard } from '../pages/hostelAdmin/HostelAdminDashboard';
+import { HostelAttendanceAnalytics } from '../pages/hostelAdmin/HostelAttendanceAnalytics';
 import { HostelTimetable } from '../pages/hostelAdmin/HostelTimetable';
 import { HostelFeedback } from '../pages/hostelAdmin/HostelFeedback';
 import { HostelCompliments } from '../pages/hostelAdmin/HostelCompliments';
@@ -101,6 +102,8 @@ export const AppRoutes = () => {
         }
       >
         <Route index element={<HostelAdminDashboard />} />
+        <Route path="attendance" element={<HostelAttendanceAnalytics />} />
+        <Route path="analytics" element={<HostelAttendanceAnalytics />} />
         <Route path="timetable" element={<HostelTimetable />} />
         <Route path="feedback" element={<HostelFeedback />} />
         <Route path="compliments" element={<HostelCompliments />} />

@@ -2,23 +2,49 @@ import React, { useState } from 'react';
 import {
   Building2, Users, Utensils, Heart, Star, Calendar,
   ShieldCheck, ArrowUpRight, Sparkles, MessageSquare, Coffee,
-  CheckCircle2, Clock, Flame, Award
+  CheckCircle2, Clock, Flame, Award, QrCode, BarChart3, TrendingUp
 } from 'lucide-react';
+import {
+  BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis,
+  CartesianGrid, Tooltip, ResponsiveContainer, Legend
+} from 'recharts';
 import { useAuth } from '../../hooks/useAuth';
 import { WeeklyMenu } from '../../components/messAdmin/menu/WeeklyMenu';
 import { FeedbackReviewExplorer } from '../../components/common/FeedbackReviewExplorer';
+import { MessCounterQR } from '../../components/messAdmin/attendance/MessCounterQR';
+import { getCurrentMeal } from '../../utils/dateUtils';
 import { Link } from 'react-router-dom';
+
+const DAILY_MEAL_DATA = [
+  { meal: 'Breakfast', attended: 395, capacity: 450, rate: '87.7%', status: 'Completed', time: '07:30 - 09:30 AM' },
+  { meal: 'Lunch', attended: 418, capacity: 450, rate: '92.8%', status: 'Serving Now', time: '12:00 - 02:30 PM' },
+  { meal: 'Snacks', attended: 290, capacity: 450, rate: '64.4%', status: 'Upcoming', time: '05:00 - 06:15 PM' },
+  { meal: 'Dinner', attended: 425, capacity: 450, rate: '94.4%', status: 'Upcoming', time: '07:30 - 09:45 PM' },
+];
+
+const WEEKLY_DATA = [
+  { day: 'Mon', breakfast: 390, lunch: 410, snacks: 280, dinner: 420, total: 1500 },
+  { day: 'Tue', breakfast: 395, lunch: 415, snacks: 295, dinner: 425, total: 1530 },
+  { day: 'Wed', breakfast: 385, lunch: 420, snacks: 300, dinner: 418, total: 1523 },
+  { day: 'Thu', breakfast: 400, lunch: 412, snacks: 275, dinner: 422, total: 1509 },
+  { day: 'Fri', breakfast: 410, lunch: 435, snacks: 310, dinner: 430, total: 1585 },
+  { day: 'Sat', breakfast: 375, lunch: 390, snacks: 260, dinner: 440, total: 1465 },
+  { day: 'Sun', breakfast: 420, lunch: 445, snacks: 330, dinner: 435, total: 1630 },
+];
 
 export const HostelAdminDashboard = () => {
   const { user } = useAuth();
   const hostelName = user?.hostel_name || 'BH-7 (Boys Hostel 7)';
-  const [activeTab, setActiveTab] = useState('timetable'); // 'timetable' | 'feedback' | 'compliments'
+  const activeMeal = getCurrentMeal() || 'lunch';
+
+  const [activeTab, setActiveTab] = useState('attendance'); // 'attendance' | 'timetable' | 'feedback' | 'compliments'
+  const [graphPeriod, setGraphPeriod] = useState('day'); // 'day' | 'week'
 
   const stats = [
-    { title: 'Total Hostel Residents', value: '450', subtitle: '98% Room Occupancy', icon: Users, color: 'indigo' },
-    { title: "Today's Mess Turnout", value: '412 / 450', subtitle: '91.5% Live Attendance', icon: Utensils, color: 'emerald' },
-    { title: 'Average Food Rating', value: '4.8 ★', subtitle: 'Based on 320 reviews', icon: Star, color: 'amber' },
-    { title: 'Chef Praises & Kudos', value: '48 ❤️', subtitle: 'High Student Satisfaction', icon: Heart, color: 'rose' },
+    { title: "Today's Live Headcount", value: '418 / 450', subtitle: '92.8% Serving in Lunch', icon: Utensils, color: 'emerald' },
+    { title: 'Total Registered Residents', value: '450', subtitle: `${hostelName} Residents`, icon: Users, color: 'indigo' },
+    { title: 'Average Food Rating', value: '4.8 ★', subtitle: '320 Verified Reviews', icon: Star, color: 'amber' },
+    { title: 'Chef Praises & Kudos', value: '48 ❤️', subtitle: 'Student Appreciations', icon: Heart, color: 'rose' },
   ];
 
   const recentCompliments = [
@@ -29,7 +55,7 @@ export const HostelAdminDashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Banner */}
+      {/* Top Banner with Strict Hostel Scope */}
       <div className="p-6 rounded-3xl bg-gradient-to-r from-purple-700 via-indigo-700 to-indigo-900 text-white shadow-xl relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-2">
@@ -41,17 +67,17 @@ export const HostelAdminDashboard = () => {
               {hostelName} Administration
             </h1>
             <p className="text-indigo-100 text-xs md:text-sm">
-              Logged in as <span className="font-bold text-white">{user?.full_name || 'Hostel Warden'}</span> • Overseeing 7-day food timetable, dish reviews & resident satisfaction.
+              Logged in as <span className="font-bold text-white">{user?.full_name || 'Hostel Warden'}</span> • Live Turnout, 7-Day Timetable, QR & Dining Feedback for {hostelName} only.
             </p>
           </div>
 
           <div className="flex items-center gap-2.5 self-start md:self-auto">
             <Link
-              to="/hostel-admin/students"
+              to="/hostel-admin/attendance"
               className="px-4 py-2.5 rounded-xl bg-white text-indigo-900 text-xs font-extrabold hover:bg-indigo-50 shadow-md transition-all flex items-center gap-1.5 shrink-0"
             >
-              <Users className="w-3.5 h-3.5" />
-              <span>Residents Directory</span>
+              <QrCode className="w-3.5 h-3.5 text-indigo-600" />
+              <span>Live QR Station</span>
             </Link>
           </div>
         </div>
@@ -79,6 +105,18 @@ export const HostelAdminDashboard = () => {
       {/* Dashboard View Navigation Tabs */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setActiveTab('attendance')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
+              activeTab === 'attendance'
+                ? 'bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20'
+                : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-emerald-300'
+            }`}
+          >
+            <BarChart3 className="w-3.5 h-3.5" />
+            <span>Live Attendance & Graphs</span>
+          </button>
+
           <button
             onClick={() => setActiveTab('timetable')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
@@ -117,9 +155,108 @@ export const HostelAdminDashboard = () => {
         </div>
 
         <span className="text-[11px] text-slate-400 font-semibold px-2">
-          {hostelName} Live Portal
+          {hostelName} Strictly Isolated Data
         </span>
       </div>
+
+      {/* Tab 0: Live Attendance & Graphs (NEW) */}
+      {activeTab === 'attendance' && (
+        <div className="space-y-6 animate-fade-in">
+          {/* Daily 4-Meal Breakdown Grid */}
+          <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 className="font-extrabold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                  <Utensils className="w-4 h-4 text-emerald-500" />
+                  <span>Today's Meal-by-Meal Headcount in {hostelName}</span>
+                </h3>
+                <p className="text-xs text-slate-500">Live counts of students who ate in each meal period</p>
+              </div>
+
+              <div className="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 text-xs">
+                <button
+                  onClick={() => setGraphPeriod('day')}
+                  className={`px-3 py-1 rounded-lg font-bold transition-all ${
+                    graphPeriod === 'day' ? 'bg-white dark:bg-slate-900 text-emerald-600 shadow-sm' : 'text-slate-500'
+                  }`}
+                >
+                  1-Day Meal Bars
+                </button>
+                <button
+                  onClick={() => setGraphPeriod('week')}
+                  className={`px-3 py-1 rounded-lg font-bold transition-all ${
+                    graphPeriod === 'week' ? 'bg-white dark:bg-slate-900 text-emerald-600 shadow-sm' : 'text-slate-500'
+                  }`}
+                >
+                  7-Day Trend Area
+                </button>
+              </div>
+            </div>
+
+            {/* Attendance Chart */}
+            <div className="h-64 w-full pt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                {graphPeriod === 'day' ? (
+                  <BarChart data={DAILY_MEAL_DATA} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
+                    <XAxis dataKey="meal" tick={{ fill: '#64748b', fontSize: 12, fontWeight: 600 }} />
+                    <YAxis domain={[0, 480]} tick={{ fill: '#64748b', fontSize: 11 }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', color: '#fff', fontSize: '12px' }} />
+                    <Bar dataKey="attended" fill="#10b981" radius={[8, 8, 0, 0]} name="Students Eaten" />
+                    <Bar dataKey="capacity" fill="#cbd5e1" radius={[8, 8, 0, 0]} name="Total Capacity (450)" />
+                  </BarChart>
+                ) : (
+                  <AreaChart data={WEEKLY_DATA} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="hostelGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
+                    <XAxis dataKey="day" tick={{ fill: '#64748b', fontSize: 12, fontWeight: 600 }} />
+                    <YAxis domain={[1200, 1800]} tick={{ fill: '#64748b', fontSize: 11 }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', color: '#fff', fontSize: '12px' }} />
+                    <Area type="monotone" dataKey="total" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#hostelGrad)" name="Total Daily Meals" />
+                  </AreaChart>
+                )}
+              </ResponsiveContainer>
+            </div>
+
+            {/* 4 Meal Cards Breakdown */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
+              {DAILY_MEAL_DATA.map((m) => (
+                <div key={m.meal} className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 space-y-1">
+                  <div className="flex items-center justify-between font-bold text-xs">
+                    <span className="text-slate-900 dark:text-white">{m.meal}</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${m.status === 'Serving Now' ? 'bg-emerald-500 text-white font-bold animate-pulse' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}>
+                      {m.status}
+                    </span>
+                  </div>
+                  <div className="text-lg font-extrabold text-emerald-600 dark:text-emerald-400">
+                    {m.attended} <span className="text-xs text-slate-400 font-normal">/ 450 ate</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] text-slate-500">
+                    <span>{m.time}</span>
+                    <span className="font-bold text-emerald-500">{m.rate}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Link
+              to="/hostel-admin/attendance"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 shadow-md transition-all"
+            >
+              <QrCode className="w-4 h-4" />
+              <span>Open Dedicated Live QR & Attendance Station</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Tab 1: 7-Day Timetable with Warden Edit Permissions */}
       {activeTab === 'timetable' && (
