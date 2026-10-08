@@ -3,9 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
   Utensils, GraduationCap, User, Mail, Lock, Phone,
-  Building, ArrowRight, Hash, BedDouble, Loader2, CheckCircle, AlertCircle
+  Building, ArrowRight, Hash, BedDouble, Loader2, CheckCircle, AlertCircle,
+  Sun, Moon
 } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
+import { useTheme } from '../../context/ThemeContext';
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || '/api';
 
@@ -28,6 +30,7 @@ const HOSTEL_IDS = {
 };
 
 export const Register = () => {
+  const { isDark, toggleTheme } = useTheme();
   const [form, setForm] = useState({
     full_name: '',
     email: '',
@@ -189,8 +192,32 @@ export const Register = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 transition-colors py-12">
-      <div className="w-full max-w-lg p-6 sm:p-8 rounded-3xl glass-card space-y-6 border border-slate-200 dark:border-indigo-500/20 bg-white dark:bg-slate-900/90 shadow-2xl">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 relative overflow-hidden transition-colors py-12">
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Floating Theme Toggle (Light / Dark Mode) */}
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-30">
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label="Toggle theme mode"
+          className="flex items-center space-x-2 px-3.5 py-2 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group ring-1 ring-slate-900/5 dark:ring-white/10"
+        >
+          {isDark ? (
+            <>
+              <Sun className="w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform duration-300" />
+              <span className="text-xs font-semibold">Light Mode</span>
+            </>
+          ) : (
+            <>
+              <Moon className="w-4 h-4 text-indigo-600 group-hover:-rotate-12 transition-transform duration-300" />
+              <span className="text-xs font-semibold">Dark Mode</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      <div className="w-full max-w-lg p-6 sm:p-8 rounded-3xl glass-card space-y-6 border border-slate-200 dark:border-indigo-500/20 bg-white dark:bg-slate-900/90 shadow-2xl relative z-10">
 
         {/* Header */}
         <div className="text-center space-y-2">

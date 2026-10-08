@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Utensils, Lock, Mail, ArrowRight, GraduationCap, ChefHat,
-  ShieldCheck, Sparkles, Loader2, AlertCircle, Eye, EyeOff
+  ShieldCheck, Sparkles, Loader2, AlertCircle, Eye, EyeOff, Sun, Moon
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../context/ThemeContext';
 import { supabase } from '../../lib/supabaseClient';
 import axios from 'axios';
 
@@ -13,6 +14,7 @@ const API_URL = import.meta.env.VITE_BACKEND_URL || '/api';
 import { getAdminCredentials } from '../../context/AuthContext';
 
 export const Login = () => {
+  const { isDark, toggleTheme } = useTheme();
   const [role, setRole] = useState('student');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -198,6 +200,28 @@ export const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 relative overflow-hidden transition-colors py-10">
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Floating Theme Toggle (Light / Dark Mode) */}
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-30">
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label="Toggle theme mode"
+          className="flex items-center space-x-2 px-3.5 py-2 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group ring-1 ring-slate-900/5 dark:ring-white/10"
+        >
+          {isDark ? (
+            <>
+              <Sun className="w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform duration-300" />
+              <span className="text-xs font-semibold">Light Mode</span>
+            </>
+          ) : (
+            <>
+              <Moon className="w-4 h-4 text-indigo-600 group-hover:-rotate-12 transition-transform duration-300" />
+              <span className="text-xs font-semibold">Dark Mode</span>
+            </>
+          )}
+        </button>
+      </div>
 
       <div className="w-full max-w-xl p-6 sm:p-8 rounded-3xl glass-card space-y-6 border border-slate-200 dark:border-indigo-500/20 shadow-2xl relative z-10 bg-white dark:bg-slate-900/90">
 
