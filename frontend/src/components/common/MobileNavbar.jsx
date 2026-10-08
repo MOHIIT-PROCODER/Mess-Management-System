@@ -1,12 +1,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, QrCode, MessageSquare, Trophy, User } from 'lucide-react';
+import { LayoutDashboard, Utensils, QrCode, MessageSquare, Trophy, User } from 'lucide-react';
 
 export const MobileNavbar = () => {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 backdrop-blur-lg px-6 py-2 md:hidden flex justify-between items-center bg-white/95 dark:bg-slate-900/95 border-t border-slate-200 dark:border-slate-800 transition-colors duration-300">
       {[
         { to: '/student', label: 'Home', icon: LayoutDashboard, end: true },
+        { to: '/student/menu', label: 'Menu', icon: Utensils, end: false },
         { to: '/student/attendance', label: 'Scan', icon: QrCode },
         { to: '/student/feedback', label: 'Feedback', icon: MessageSquare },
         { to: '/student/achievements', label: 'Badges', icon: Trophy },

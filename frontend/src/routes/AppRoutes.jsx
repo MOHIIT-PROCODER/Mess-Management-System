@@ -16,6 +16,7 @@ import { ResetPassword } from '../pages/auth/ResetPassword';
 
 // Student Pages
 import { StudentHome } from '../pages/student/StudentHome';
+import { WeeklyMenuPage } from '../pages/student/WeeklyMenuPage';
 import { Attendance } from '../pages/student/Attendance';
 import { Feedback } from '../pages/student/Feedback';
 import { Complaints } from '../pages/student/Complaints';
@@ -72,6 +73,7 @@ export const AppRoutes = () => {
         }
       >
         <Route index element={<StudentHome />} />
+        <Route path="menu" element={<WeeklyMenuPage />} />
         <Route path="attendance" element={<Attendance />} />
         <Route path="feedback" element={<Feedback />} />
         <Route path="complaints" element={<Complaints />} />

@@ -11,6 +11,7 @@ export const Sidebar = () => {
 
   const studentLinks = [
     { to: '/student', label: 'Dashboard', icon: LayoutDashboard },
+    { to: '/student/menu', label: 'Weekly Menu', icon: Calendar },
     { to: '/student/attendance', label: 'Scan & QR', icon: QrCode },
     { to: '/student/feedback', label: 'Meal Feedback', icon: MessageSquare },
     { to: '/student/complaints', label: 'Compliments', icon: Heart },
