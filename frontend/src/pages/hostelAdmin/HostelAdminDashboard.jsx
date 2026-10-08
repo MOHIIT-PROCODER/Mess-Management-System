@@ -63,13 +63,13 @@ export const HostelAdminDashboard = () => {
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/20 text-xs font-bold">
               <ShieldCheck className="w-3.5 h-3.5 text-amber-300" />
-              <span>Hostel Warden & Dining Governance</span>
+              <span>Hostel Administration & Dining Governance</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
-              {hostelName} Administration
+              {hostelName} Dashboard
             </h1>
             <p className="text-indigo-100 text-xs md:text-sm">
-              Logged in as <span className="font-bold text-white">{user?.full_name || 'Hostel Warden'}</span> • Live Turnout, 7-Day Timetable, QR & Dining Feedback for {hostelName} only.
+              Logged in as <span className="font-bold text-white">{user?.full_name || 'Hostel Administrator'}</span> • Live Turnout, 7-Day Timetable, QR & Dining Feedback for {hostelName} only.
             </p>
           </div>
 

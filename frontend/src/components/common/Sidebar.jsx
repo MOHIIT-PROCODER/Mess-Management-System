@@ -21,7 +21,7 @@ export const Sidebar = () => {
   ];
 
   const hostelAdminLinks = [
-    { to: '/hostel-admin', label: 'Warden Dashboard', icon: LayoutDashboard },
+    { to: '/hostel-admin', label: 'Hostel Dashboard', icon: LayoutDashboard },
     { to: '/hostel-admin/attendance', label: 'Live QR & Attendance', icon: QrCode },
     { to: '/hostel-admin/timetable', label: 'Live & Weekly Timetable', icon: Calendar },
     { to: '/hostel-admin/feedback', label: 'Student Feedback', icon: MessageSquare },
