@@ -1,0 +1,24 @@
+{
+  "name": "mess-management-system",
+  "version": "1.0.0",
+  "description": "Full-stack Mess Management System with React, Express, Supabase, Cloudinary, Groq AI & Tailwind CSS",
+  "scripts": {
+    "setup": "npm install --prefix frontend && npm install --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "start:backend": "npm start --prefix backend",
+    "build:frontend": "npm run build --prefix frontend"
+  },
+  "keywords": [
+    "mess-management",
+    "hostel",
+    "react",
+    "tailwind",
+    "supabase",
+    "express",
+    "qr-attendance",
+    "ai-insights"
+  ],
+  "author": "Mess Management Engineering Team",
+  "license": "MIT"
+}
