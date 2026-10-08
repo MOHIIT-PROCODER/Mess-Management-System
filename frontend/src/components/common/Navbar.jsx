@@ -42,6 +42,7 @@ export const Navbar = () => {
     { to: '/hostel-admin', label: 'Hostel Dashboard', icon: LayoutDashboard },
     { to: '/hostel-admin/attendance', label: 'Live QR & Attendance', icon: QrCode },
     { to: '/hostel-admin/timetable', label: 'Live & Weekly Timetable', icon: Calendar },
+    { to: '/hostel-admin/reports', label: 'Reports & Exports', icon: FileText },
     { to: '/hostel-admin/feedback', label: 'Student Feedback', icon: MessageSquare },
     { to: '/hostel-admin/compliments', label: 'Chef Compliments', icon: Heart },
     { to: '/hostel-admin/students', label: 'Hostel Residents', icon: User },
@@ -62,6 +63,7 @@ export const Navbar = () => {
     { to: '/superadmin/attendance', label: 'Campus Attendance Graphs', icon: BarChart3 },
     { to: '/superadmin/menus', label: '7-Day Food Menus', icon: Calendar },
     { to: '/superadmin/hostels', label: 'Hostels & Admin Accounts', icon: Building },
+    { to: '/superadmin/reports', label: 'Reports & Exports', icon: FileText },
     { to: '/superadmin/feedback', label: 'Student Feedback', icon: MessageSquare },
     { to: '/superadmin/profile', label: 'Admin Profile', icon: User }
   ];

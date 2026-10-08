@@ -33,6 +33,7 @@ import { HostelFeedback } from '../pages/hostelAdmin/HostelFeedback';
 import { HostelCompliments } from '../pages/hostelAdmin/HostelCompliments';
 import { HostelStudents } from '../pages/hostelAdmin/HostelStudents';
 import { HostelProfile } from '../pages/hostelAdmin/HostelProfile';
+import { HostelReports } from '../pages/hostelAdmin/HostelReports';
 
 // Mess Admin Pages
 import { MessAdminDashboard } from '../pages/messAdmin/MessAdminDashboard';
@@ -52,6 +53,7 @@ import { HostelManagement } from '../pages/superAdmin/HostelManagement';
 import { MessAdminManagement } from '../pages/superAdmin/MessAdminManagement';
 import { SuperAdminFeedback } from '../pages/superAdmin/SuperAdminFeedback';
 import { SuperAdminProfile } from '../pages/superAdmin/SuperAdminProfile';
+import { SuperAdminReports } from '../pages/superAdmin/SuperAdminReports';
 
 // Dynamic Role Home Redirection
 const RoleBasedRedirect = () => {
@@ -112,6 +114,7 @@ export const AppRoutes = () => {
         <Route path="compliments" element={<HostelCompliments />} />
         <Route path="students" element={<HostelStudents />} />
         <Route path="profile" element={<HostelProfile />} />
+        <Route path="reports" element={<HostelReports />} />
       </Route>
 
       {/* Mess Admin Portal Routes (Restricted strictly to Mess Admin, Hostel Admin and Super Admin) */}
@@ -151,6 +154,7 @@ export const AppRoutes = () => {
         <Route path="admins" element={<HostelManagement />} />
         <Route path="feedback" element={<SuperAdminFeedback />} />
         <Route path="profile" element={<SuperAdminProfile />} />
+        <Route path="reports" element={<SuperAdminReports />} />
       </Route>
 
       {/* Default Catch-all */}
