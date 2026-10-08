@@ -45,6 +45,8 @@ import { Reports } from '../pages/messAdmin/Reports';
 import { Settings } from '../pages/messAdmin/Settings';
 
 import { SuperAdminDashboard } from '../pages/superAdmin/SuperAdminDashboard';
+import { CampusAttendanceAnalytics } from '../pages/superAdmin/CampusAttendanceAnalytics';
+import { CampusFoodTimetables } from '../pages/superAdmin/CampusFoodTimetables';
 import { HostelManagement } from '../pages/superAdmin/HostelManagement';
 import { MessAdminManagement } from '../pages/superAdmin/MessAdminManagement';
 import { SuperAdminFeedback } from '../pages/superAdmin/SuperAdminFeedback';
@@ -141,6 +143,8 @@ export const AppRoutes = () => {
         }
       >
         <Route index element={<SuperAdminDashboard />} />
+        <Route path="attendance" element={<CampusAttendanceAnalytics />} />
+        <Route path="menus" element={<CampusFoodTimetables />} />
         <Route path="hostels" element={<HostelManagement />} />
         <Route path="admins" element={<MessAdminManagement />} />
         <Route path="feedback" element={<SuperAdminFeedback />} />

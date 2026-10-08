@@ -1,10 +1,10 @@
 import React from 'react';
-import { MessAdminManager } from '../../components/superAdmin/MessAdminManager';
+import { AdminAccountCreator } from '../../components/superAdmin/AdminAccountCreator';
 
 export const MessAdminManagement = () => {
   return (
     <div className="space-y-6">
-      <MessAdminManager />
+      <AdminAccountCreator />
     </div>
   );
 };

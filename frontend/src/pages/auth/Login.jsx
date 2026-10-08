@@ -10,21 +10,7 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || '/api';
 
-// Hardcoded Admin Credentials (same as AuthContext)
-const ADMIN_CREDENTIALS = {
-  hostel_admin: [
-    { email: 'warden.bh7@campus.edu', password: 'warden123', data: { id: 'hostel-admin-07', full_name: 'Dr. S. K. Mahapatra (BH-7 Warden)', role: 'hostel_admin', hostel_name: 'BH-7 (Boys Hostel 7)', hostel_id: 'a1b2c3d4-0000-0000-0000-000000000007' } },
-    { email: 'warden.bh1@campus.edu', password: 'warden123', data: { id: 'hostel-admin-01', full_name: 'Prof. R. C. Mohanty (BH-1 Warden)', role: 'hostel_admin', hostel_name: 'Aryabhata Boys Hostel (BH-1)', hostel_id: 'a1b2c3d4-0000-0000-0000-000000000001' } },
-  ],
-  mess_admin: [
-    { email: 'admin@mess.edu', password: 'admin123', data: { id: 'mess-admin-01', full_name: 'Rajesh Sharma', role: 'mess_admin', hostel_name: 'Aryabhata Boys Hostel (BH-1)', hostel_id: 'a1b2c3d4-0000-0000-0000-000000000001' } },
-    { email: 'bh7admin@mess.edu', password: 'admin123', data: { id: 'mess-admin-07', full_name: 'Alok Verma (BH-7 Caterer)', role: 'mess_admin', hostel_name: 'BH-7 (Boys Hostel 7)', hostel_id: 'a1b2c3d4-0000-0000-0000-000000000007' } },
-  ],
-  super_admin: [
-    { email: 'director@campus.edu', password: 'super123', data: { id: 'super-admin-01', full_name: 'Dr. V. Ramanathan (Chief Warden)', role: 'super_admin', hostel_name: 'All Campuses (Directorate)' } },
-    { email: 'superadmin@campus.edu', password: 'super123', data: { id: 'super-admin-02', full_name: 'Dean Student Affairs', role: 'super_admin', hostel_name: 'All Campuses' } },
-  ]
-};
+import { getAdminCredentials } from '../../context/AuthContext';
 
 export const Login = () => {
   const [role, setRole] = useState('student');
@@ -134,14 +120,14 @@ export const Login = () => {
         navigate('/student');
 
       } else {
-        // ── Admin: Check hardcoded credentials ──
-        const credList = ADMIN_CREDENTIALS[role] || [];
+        // ── Admin: Check hardcoded or dynamically created credentials ──
+        const credList = getAdminCredentials()[role] || [];
         const match = credList.find(
           (c) => c.email.toLowerCase() === email.trim().toLowerCase() && c.password === password
         );
 
         if (!match) {
-          setError(`Invalid ${role === 'super_admin' ? 'Super Admin' : 'Mess Admin'} credentials.`);
+          setError(`Invalid ${role === 'super_admin' ? 'Super Admin' : role === 'hostel_admin' ? 'Hostel Warden' : 'Mess Admin'} credentials.`);
           setLoading(false);
           return;
         }
