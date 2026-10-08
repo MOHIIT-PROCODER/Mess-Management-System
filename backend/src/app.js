@@ -41,7 +41,23 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/upload', uploadRoutes);
 
+// Serve Frontend Static Files & SPA Catch-all Fallback (if built together)
+const path = require('path');
+const fs = require('fs');
+const frontendDist = path.join(__dirname, '../../frontend/dist');
+
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
+
 // Global Error Handler
 app.use(errorHandler);
 
 module.exports = app;
+
