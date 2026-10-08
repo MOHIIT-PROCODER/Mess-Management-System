@@ -51,6 +51,8 @@ const DEFAULT_WEEKLY_MENU = {
   ]
 };
 
+import { menuService } from '../../../services/menuService';
+
 export const TodayMenu = ({ menuItems = [] }) => {
   const activeMeal = getCurrentMeal();
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -58,8 +60,24 @@ export const TodayMenu = ({ menuItems = [] }) => {
 
   const [selectedDay, setSelectedDay] = useState(todayDayName);
   const [viewMode, setViewMode] = useState('day'); // 'day' | 'week'
+  const [dataVersion, setDataVersion] = useState(0);
 
-  // Read any custom weekly menu edits from localStorage
+  useEffect(() => {
+    menuService.getWeeklyMenu().then(() => {
+      setDataVersion((v) => v + 1);
+    });
+
+    const handleUpdate = () => setDataVersion((v) => v + 1);
+    window.addEventListener('iterp_menu_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    return () => {
+      window.removeEventListener('iterp_menu_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
+
+  // Read any custom weekly menu edits from localStorage / Supabase
   const getDayMeals = (dayName) => {
     try {
       const saved = localStorage.getItem('iterp_weekly_timetable');

@@ -54,6 +54,8 @@ const DEFAULT_WEEKLY_TIMETABLE = {
   },
 };
 
+import { menuService } from '../../services/menuService';
+
 export const WeeklyMenuPage = () => {
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const todayDayName = dayNames[new Date().getDay()];
@@ -62,8 +64,25 @@ export const WeeklyMenuPage = () => {
   const [selectedDay, setSelectedDay] = useState('ALL'); // 'ALL' or day name
   const [mealFilter, setMealFilter] = useState('ALL'); // 'ALL' | 'breakfast' | 'lunch' | 'snacks' | 'dinner'
   const [searchQuery, setSearchQuery] = useState('');
+  const [menuDataVersion, setMenuDataVersion] = useState(0);
 
-  // Load latest timetable (with localStorage overrides if any)
+  // Fetch live menu from server/database on load
+  useEffect(() => {
+    menuService.getWeeklyMenu().then(() => {
+      setMenuDataVersion((v) => v + 1);
+    });
+
+    const handleUpdate = () => setMenuDataVersion((v) => v + 1);
+    window.addEventListener('iterp_menu_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    return () => {
+      window.removeEventListener('iterp_menu_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
+
+  // Load latest timetable (with localStorage / Supabase overrides)
   const timetable = useMemo(() => {
     const base = JSON.parse(JSON.stringify(DEFAULT_WEEKLY_TIMETABLE));
     try {
@@ -92,7 +111,7 @@ export const WeeklyMenuPage = () => {
       console.warn('Weekly timetable read error:', e);
     }
     return base;
-  }, []);
+  }, [menuDataVersion]);
 
   const activeDaysToRender = selectedDay === 'ALL' ? DAYS : [selectedDay];
 

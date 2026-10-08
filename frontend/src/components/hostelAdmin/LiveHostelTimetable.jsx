@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {
   Clock, Utensils, Flame, Sparkles, Star, Edit3, Save,
-  CheckCircle2, Coffee, Cookie, Moon, AlertCircle, Eye, Users
+  CheckCircle2, Coffee, Cookie, Moon, AlertCircle, Eye, Users, ImageIcon
 } from 'lucide-react';
 import { getCurrentMeal } from '../../utils/dateUtils';
 import { menuService } from '../../services/menuService';
+import { FoodImageUploader } from '../messAdmin/menu/FoodImageUploader';
+import { getPlaceholderFoodImage } from '../../utils/imageUtils';
 
 const MEAL_TIMES = {
   breakfast: { name: 'Breakfast', slot: '07:30 - 09:30 AM', startH: 7.5, endH: 9.5 },
@@ -32,6 +34,7 @@ export const LiveHostelTimetable = ({ hostelName = 'BH-7 (Boys Hostel 7)', onTim
     calories: 850,
     time: '12:00 - 02:30 PM',
     is_special: true,
+    image_url: null,
     live_eaten: 418,
     total_capacity: 450,
     chef_on_duty: 'Chef Santosh & Team',
@@ -50,7 +53,7 @@ export const LiveHostelTimetable = ({ hostelName = 'BH-7 (Boys Hostel 7)', onTim
     return () => clearInterval(timer);
   }, []);
 
-  // Load from local storage if available
+  // Load from local storage or server if available
   useEffect(() => {
     try {
       const saved = localStorage.getItem('iterp_weekly_timetable');
@@ -67,6 +70,7 @@ export const LiveHostelTimetable = ({ hostelName = 'BH-7 (Boys Hostel 7)', onTim
             calories: m.calories || prev.calories,
             time: m.time || prev.time,
             is_special: !!m.is_special,
+            image_url: m.image_url || prev.image_url,
           }));
         }
       }
@@ -87,6 +91,7 @@ export const LiveHostelTimetable = ({ hostelName = 'BH-7 (Boys Hostel 7)', onTim
         calories: Number(slotData.calories),
         time: slotData.time,
         is_special: slotData.is_special,
+        image_url: slotData.image_url || null,
       };
       localStorage.setItem('iterp_weekly_timetable', JSON.stringify(fullWeek));
       
@@ -101,6 +106,7 @@ export const LiveHostelTimetable = ({ hostelName = 'BH-7 (Boys Hostel 7)', onTim
         start_time: start?.trim(),
         end_time: end?.trim() || start?.trim(),
         is_special: slotData.is_special,
+        image_url: slotData.image_url || null,
       });
     } catch (e) {
       console.warn('Save live menu error:', e);
@@ -113,6 +119,7 @@ export const LiveHostelTimetable = ({ hostelName = 'BH-7 (Boys Hostel 7)', onTim
   };
 
   const dishes = slotData.items.split(',').map((s) => s.trim()).filter(Boolean);
+  const displayImage = slotData.image_url || getPlaceholderFoodImage(activeMealKey);
 
   return (
     <div className="p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white border border-indigo-500/30 shadow-2xl relative overflow-hidden space-y-5">
@@ -155,7 +162,7 @@ export const LiveHostelTimetable = ({ hostelName = 'BH-7 (Boys Hostel 7)', onTim
               className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-extrabold shadow-lg shadow-emerald-500/30 flex items-center gap-1.5 transition-all"
             >
               <Save className="w-4 h-4" />
-              <span>Save Slot</span>
+              <span>Save Slot & Photo</span>
             </button>
           ) : (
             <button
@@ -163,7 +170,7 @@ export const LiveHostelTimetable = ({ hostelName = 'BH-7 (Boys Hostel 7)', onTim
               className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-extrabold shadow-lg shadow-indigo-600/30 flex items-center gap-1.5 transition-all"
             >
               <Edit3 className="w-4 h-4" />
-              <span>Edit Live Slot</span>
+              <span>Edit Live Slot & Photo</span>
             </button>
           )}
         </div>
@@ -172,12 +179,12 @@ export const LiveHostelTimetable = ({ hostelName = 'BH-7 (Boys Hostel 7)', onTim
       {savedSuccess && (
         <div className="p-3.5 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 flex items-center gap-2 text-xs font-bold animate-fade-in">
           <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span>Live meal timetable updated! Reflected on student apps and digital dining hall boards.</span>
+          <span>✓ Live meal timetable and food image updated! Instantly synced to student portal.</span>
         </div>
       )}
 
       {/* Main Active Meal Showcase */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
         {/* Left 2 Cols: Meal & Dishes */}
         <div className="lg:col-span-2 space-y-4">
           {/* Meal Selector Tabs (for previewing or editing other slots) */}
@@ -202,7 +209,19 @@ export const LiveHostelTimetable = ({ hostelName = 'BH-7 (Boys Hostel 7)', onTim
 
           {/* Edit Form OR Display View */}
           {isEditing ? (
-            <div className="space-y-3 p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 animate-fade-in">
+            <div className="space-y-4 p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 animate-fade-in">
+              {/* Food Image Uploader */}
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-indigo-200 block mb-1">
+                  Food Photo / Live Image
+                </label>
+                <FoodImageUploader
+                  currentImage={slotData.image_url}
+                  mealLabel={`live-${activeMealKey}`}
+                  onImageSaved={(url) => setSlotData((prev) => ({ ...prev, image_url: url }))}
+                />
+              </div>
+
               <div>
                 <label className="text-[10px] font-bold uppercase tracking-wider text-indigo-200">Dishes Being Cooked & Served</label>
                 <textarea
@@ -249,33 +268,51 @@ export const LiveHostelTimetable = ({ hostelName = 'BH-7 (Boys Hostel 7)', onTim
             </div>
           ) : (
             <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <h3 className="text-2xl font-black text-white capitalize flex items-center gap-2">
-                  {MEAL_ICONS[activeMealKey]}
-                  <span>{MEAL_TIMES[activeMealKey]?.name || activeMealKey}</span>
-                </h3>
-                {slotData.is_special && (
-                  <span className="px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-extrabold flex items-center gap-1 shadow">
-                    <Star className="w-3 h-3 fill-current" />
-                    Special Feast
-                  </span>
-                )}
-              </div>
+              {/* Photo & Headline Row */}
+              <div className="flex flex-col sm:flex-row gap-4 items-start">
+                <div className="w-full sm:w-40 h-28 rounded-2xl overflow-hidden bg-slate-800 border border-white/10 shrink-0 relative group">
+                  <img
+                    src={displayImage}
+                    alt={activeMealKey}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                  />
+                  {slotData.is_special && (
+                    <div className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded-full bg-amber-500 text-white text-[9px] font-bold shadow">
+                      Special
+                    </div>
+                  )}
+                </div>
 
-              {/* Dish Badges */}
-              <div className="flex flex-wrap gap-2 pt-1">
-                {dishes.map((dish, i) => (
-                  <span
-                    key={i}
-                    className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/10 text-xs font-semibold text-slate-100 transition-colors"
-                  >
-                    {dish}
-                  </span>
-                ))}
+                <div className="space-y-2 flex-1">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-2xl font-black text-white capitalize flex items-center gap-2">
+                      {MEAL_ICONS[activeMealKey]}
+                      <span>{MEAL_TIMES[activeMealKey]?.name || activeMealKey}</span>
+                    </h3>
+                    {slotData.is_special && (
+                      <span className="px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-extrabold flex items-center gap-1 shadow">
+                        <Star className="w-3 h-3 fill-current" />
+                        Special Feast
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Dish Badges */}
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {dishes.map((dish, i) => (
+                      <span
+                        key={i}
+                        className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/10 text-xs font-semibold text-slate-100 transition-colors"
+                      >
+                        {dish}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Meta stats */}
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300 pt-2 font-medium">
+              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300 pt-2 font-medium border-t border-white/10">
                 <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-indigo-400" />{slotData.time}</span>
                 <span className="flex items-center gap-1.5"><Flame className="w-3.5 h-3.5 text-orange-400" />{slotData.calories} kcal/serving</span>
                 <span className="flex items-center gap-1.5 text-emerald-400 font-semibold"><Sparkles className="w-3.5 h-3.5" />{slotData.chef_on_duty}</span>

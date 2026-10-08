@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { supabase } from '../lib/supabaseClient';
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || '/api';
 
@@ -26,11 +27,56 @@ const DEFAULT_CALORIES = {
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 export const menuService = {
-  getTodayMenu: async (hostelId) => {
-    const todayDayIndex = new Date().getDay();
+  getTodayMenu: async (hostelId = 'a1b2c3d4-0000-0000-0000-000000000001') => {
+    const todayDayIndex = new Date().getDay(); // 0 is Sunday, 1 is Monday...
     const todayDayName = DAYS[todayDayIndex];
+    const dayOfWeekNumber = todayDayIndex === 0 ? 7 : todayDayIndex;
 
-    // Check localStorage overrides first for instant offline/demo reflection
+    // 1. Try fetching from Supabase directly
+    try {
+      const { data: supaData, error: supaError } = await supabase
+        .from('food_menus')
+        .select('*')
+        .eq('hostel_id', hostelId)
+        .eq('day_of_week', dayOfWeekNumber);
+
+      if (!supaError && supaData && supaData.length > 0) {
+        // Sync to local storage for offline speed
+        try {
+          const saved = localStorage.getItem('iterp_weekly_timetable');
+          let timetable = saved ? JSON.parse(saved) : {};
+          if (!timetable[todayDayName]) timetable[todayDayName] = {};
+          supaData.forEach((row) => {
+            const mKey = row.meal ? row.meal.charAt(0).toUpperCase() + row.meal.slice(1).toLowerCase() : 'Lunch';
+            timetable[todayDayName][mKey] = {
+              time: row.start_time && row.end_time ? `${row.start_time} - ${row.end_time}` : DEFAULT_TIMES[row.meal.toLowerCase()],
+              items: Array.isArray(row.items) ? row.items.join(', ') : (row.items || ''),
+              calories: row.calories || DEFAULT_CALORIES[row.meal.toLowerCase()],
+              is_special: !!row.is_special,
+              image_url: row.image_url || null,
+            };
+          });
+          localStorage.setItem('iterp_weekly_timetable', JSON.stringify(timetable));
+        } catch (e) {}
+
+        return supaData.map((item) => ({
+          ...item,
+          time: item.start_time && item.end_time ? `${item.start_time} - ${item.end_time}` : DEFAULT_TIMES[item.meal.toLowerCase()]
+        }));
+      }
+    } catch (e) {
+      console.warn('Supabase today menu query note:', e);
+    }
+
+    // 2. Try Backend API
+    try {
+      const res = await axios.get(`${API_URL}/menu/today`, { params: { hostel_id: hostelId } });
+      if (res.data && res.data.data && res.data.data.length > 0) {
+        return res.data.data;
+      }
+    } catch (e) {}
+
+    // 3. Fallback to localStorage or built-in defaults
     let localDayData = null;
     try {
       const saved = localStorage.getItem('iterp_weekly_timetable');
@@ -40,31 +86,8 @@ export const menuService = {
           localDayData = timetable[todayDayName];
         }
       }
-    } catch (e) {
-      console.warn('LocalStorage read error:', e);
-    }
+    } catch (e) {}
 
-    try {
-      const res = await axios.get(`${API_URL}/menu/today`, { params: { hostel_id: hostelId } });
-      if (res.data && res.data.data && res.data.data.length > 0) {
-        // Merge with local overrides if available
-        return res.data.data.map(item => {
-          const mealKey = item.meal.charAt(0).toUpperCase() + item.meal.slice(1).toLowerCase();
-          const override = localDayData ? localDayData[mealKey] : null;
-          return {
-            ...item,
-            image_url: override?.image_url !== undefined ? override.image_url : (item.image_url || null),
-            items: override?.items ? (Array.isArray(override.items) ? override.items : override.items.split(',').map(s => s.trim())) : item.items,
-            calories: override?.calories ? Number(override.calories) : item.calories,
-            time: override?.time || (item.start_time && item.end_time ? `${item.start_time} - ${item.end_time}` : DEFAULT_TIMES[item.meal.toLowerCase()])
-          };
-        });
-      }
-    } catch {
-      // Backend not running or offline
-    }
-
-    // Build today menu from local timetable or defaults
     const meals = ['breakfast', 'lunch', 'snacks', 'dinner'];
     return meals.map((meal, idx) => {
       const mealKey = meal.charAt(0).toUpperCase() + meal.slice(1);
@@ -83,23 +106,58 @@ export const menuService = {
     });
   },
 
-  getWeeklyMenu: async (hostelId) => {
+  getWeeklyMenu: async (hostelId = 'a1b2c3d4-0000-0000-0000-000000000001') => {
+    // 1. Try Supabase
+    try {
+      const { data, error } = await supabase
+        .from('food_menus')
+        .select('*')
+        .eq('hostel_id', hostelId);
+
+      if (!error && data && data.length > 0) {
+        // Merge into localStorage
+        try {
+          const saved = localStorage.getItem('iterp_weekly_timetable');
+          let timetable = saved ? JSON.parse(saved) : {};
+          const dayNamesOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+          data.forEach((row) => {
+            const dayName = dayNamesOrder[(row.day_of_week - 1) % 7];
+            const mKey = row.meal ? row.meal.charAt(0).toUpperCase() + row.meal.slice(1).toLowerCase() : 'Lunch';
+            if (dayName && mKey) {
+              if (!timetable[dayName]) timetable[dayName] = {};
+              timetable[dayName][mKey] = {
+                time: row.start_time && row.end_time ? `${row.start_time} - ${row.end_time}` : DEFAULT_TIMES[row.meal.toLowerCase()],
+                items: Array.isArray(row.items) ? row.items.join(', ') : (row.items || ''),
+                calories: row.calories || DEFAULT_CALORIES[row.meal.toLowerCase()],
+                is_special: !!row.is_special,
+                image_url: row.image_url || null,
+              };
+            }
+          });
+          localStorage.setItem('iterp_weekly_timetable', JSON.stringify(timetable));
+        } catch (e) {}
+
+        return data;
+      }
+    } catch (e) {}
+
+    // 2. Try Backend API
     try {
       const res = await axios.get(`${API_URL}/menu/weekly`, { params: { hostel_id: hostelId } });
-      return res.data.data;
-    } catch {
-      return null;
-    }
+      if (res.data?.data) return res.data.data;
+    } catch (e) {}
+
+    return null;
   },
 
   updateMenuItem: async (menuData) => {
-    // 1. Sync immediately to local storage timetable for real-time reactivity
+    const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const dayName = dayNames[(menuData.day_of_week - 1) % 7] || 'Monday';
+    const mealCapitalized = menuData.meal.charAt(0).toUpperCase() + menuData.meal.slice(1).toLowerCase();
+
+    // 1. Sync immediately to local storage timetable for real-time local responsiveness
     try {
       const saved = localStorage.getItem('iterp_weekly_timetable');
-      const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-      const dayName = dayNames[(menuData.day_of_week - 1) % 7] || 'Monday';
-      const mealCapitalized = menuData.meal.charAt(0).toUpperCase() + menuData.meal.slice(1).toLowerCase();
-
       let timetable = saved ? JSON.parse(saved) : {};
       if (!timetable[dayName]) timetable[dayName] = {};
       timetable[dayName][mealCapitalized] = {
@@ -111,7 +169,7 @@ export const menuService = {
       };
       localStorage.setItem('iterp_weekly_timetable', JSON.stringify(timetable));
 
-      // 2. Dispatch cross-component and cross-tab update event
+      // Dispatch cross-component event
       window.dispatchEvent(new CustomEvent('iterp_menu_updated', {
         detail: { dayName, meal: menuData.meal, menuData }
       }));
@@ -119,18 +177,37 @@ export const menuService = {
       console.warn('Storage sync error:', e);
     }
 
-    // 3. Persist to backend database
+    // 2. Upsert to Supabase database so all students globally see the updated image & dishes on Render
+    try {
+      await supabase
+        .from('food_menus')
+        .upsert({
+          hostel_id: menuData.hostel_id || 'a1b2c3d4-0000-0000-0000-000000000001',
+          day_of_week: menuData.day_of_week,
+          meal: menuData.meal.toLowerCase(),
+          items: Array.isArray(menuData.items) ? menuData.items : menuData.items.split(',').map(s => s.trim()).filter(Boolean),
+          calories: Number(menuData.calories) || 500,
+          start_time: menuData.start_time,
+          end_time: menuData.end_time,
+          is_special: !!menuData.is_special,
+          image_url: menuData.image_url || null,
+        }, { onConflict: 'hostel_id,day_of_week,meal' });
+    } catch (err) {
+      console.warn('Supabase direct menu update notice:', err);
+    }
+
+    // 3. Persist to backend API endpoint
     try {
       const res = await axios.post(`${API_URL}/menu`, menuData);
       return res.data;
     } catch (err) {
-      console.warn('Menu backend sync note (mock fallback active):', err.message);
       return { success: true, data: menuData };
     }
   },
 
   deleteMenuItem: async (id) => {
     try {
+      await supabase.from('food_menus').delete().eq('id', id);
       const res = await axios.delete(`${API_URL}/menu/${id}`);
       return res.data;
     } catch {
