@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { HostelManager } from '../../components/superAdmin/HostelManager';
 import { MessAdminManager } from '../../components/superAdmin/MessAdminManager';
-import { SystemSettings } from '../../components/superAdmin/SystemSettings';
 import { DynamicBarcodePass } from '../../components/common/DynamicBarcodePass';
 import { UniversalScanner } from '../../components/common/UniversalScanner';
-import { QrCode, Camera, Shield, Barcode } from 'lucide-react';
+import { QrCode, Camera, Shield, Barcode, User, BarChart3, Calendar, Building } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 export const SuperAdminDashboard = () => {
@@ -48,6 +48,53 @@ export const SuperAdminDashboard = () => {
         </div>
       </div>
 
+      {/* Quick Access Action Cards for Super Admin */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <Link
+          to="/superadmin/attendance"
+          className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 shadow-sm transition-all group"
+        >
+          <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+            <BarChart3 className="w-4 h-4" />
+          </div>
+          <p className="font-bold text-slate-900 dark:text-white text-xs">Attendance Graphs</p>
+          <p className="text-[11px] text-slate-500 mt-0.5">Day/Week/Month Stats</p>
+        </Link>
+
+        <Link
+          to="/superadmin/menus"
+          className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-500 shadow-sm transition-all group"
+        >
+          <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+            <Calendar className="w-4 h-4" />
+          </div>
+          <p className="font-bold text-slate-900 dark:text-white text-xs">Food Timetables</p>
+          <p className="text-[11px] text-slate-500 mt-0.5">7-Day Campus Menus</p>
+        </Link>
+
+        <Link
+          to="/superadmin/admins"
+          className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 shadow-sm transition-all group"
+        >
+          <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+            <Building className="w-4 h-4" />
+          </div>
+          <p className="font-bold text-slate-900 dark:text-white text-xs">Admin Accounts</p>
+          <p className="text-[11px] text-slate-500 mt-0.5">Wardens & Caterers</p>
+        </Link>
+
+        <Link
+          to="/superadmin/profile"
+          className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-purple-500 shadow-sm transition-all group"
+        >
+          <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+            <User className="w-4 h-4" />
+          </div>
+          <p className="font-bold text-slate-900 dark:text-white text-xs">Admin Profile</p>
+          <p className="text-[11px] text-slate-500 mt-0.5">Account & Security</p>
+        </Link>
+      </div>
+
       {/* Central Station Panel */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         {activeStationTab === 'pass' ? (
@@ -89,8 +136,8 @@ export const SuperAdminDashboard = () => {
 
       <HostelManager />
       <MessAdminManager />
-      <SystemSettings />
     </div>
   );
 };
+
 

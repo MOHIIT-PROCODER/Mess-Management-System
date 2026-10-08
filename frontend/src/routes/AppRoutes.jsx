@@ -50,7 +50,7 @@ import { CampusFoodTimetables } from '../pages/superAdmin/CampusFoodTimetables';
 import { HostelManagement } from '../pages/superAdmin/HostelManagement';
 import { MessAdminManagement } from '../pages/superAdmin/MessAdminManagement';
 import { SuperAdminFeedback } from '../pages/superAdmin/SuperAdminFeedback';
-import { SystemSettings } from '../pages/superAdmin/SystemSettings';
+import { SuperAdminProfile } from '../pages/superAdmin/SuperAdminProfile';
 
 // Dynamic Role Home Redirection
 const RoleBasedRedirect = () => {
@@ -148,7 +148,7 @@ export const AppRoutes = () => {
         <Route path="hostels" element={<HostelManagement />} />
         <Route path="admins" element={<MessAdminManagement />} />
         <Route path="feedback" element={<SuperAdminFeedback />} />
-        <Route path="settings" element={<SystemSettings />} />
+        <Route path="profile" element={<SuperAdminProfile />} />
       </Route>
 
       {/* Default Catch-all */}

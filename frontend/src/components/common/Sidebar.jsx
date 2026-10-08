@@ -45,7 +45,7 @@ export const Sidebar = () => {
     { to: '/superadmin/admins', label: 'Wardens & Mess Admins', icon: User },
     { to: '/superadmin/hostels', label: 'Hostel Buildings', icon: Building },
     { to: '/superadmin/feedback', label: 'Student Feedback', icon: MessageSquare },
-    { to: '/superadmin/settings', label: 'System Settings', icon: Settings }
+    { to: '/superadmin/profile', label: 'Admin Profile', icon: User }
   ];
 
   const links =
