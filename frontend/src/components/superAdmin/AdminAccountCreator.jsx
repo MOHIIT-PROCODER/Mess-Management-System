@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   ShieldCheck, UserPlus, Key, Mail, Lock, Building, Phone,
-  Trash2, Copy, CheckCircle2, ChefHat, Eye, EyeOff, Sparkles, Filter
+  Trash2, Copy, CheckCircle2, ChefHat, Eye, EyeOff, Sparkles, Filter, Edit3, X, Save
 } from 'lucide-react';
 
 const HOSTEL_OPTIONS = [
@@ -59,6 +59,18 @@ export const AdminAccountCreator = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [successMsg, setSuccessMsg] = useState(null);
 
+  // Edit Account State
+  const [editingAdmin, setEditingAdmin] = useState(null);
+  const [editForm, setEditForm] = useState({
+    id: '',
+    full_name: '',
+    email: '',
+    password: '',
+    phone: '',
+    role: 'hostel_admin',
+    hostel_id: HOSTEL_OPTIONS[6].id,
+  });
+
   const handleCreate = (e) => {
     e.preventDefault();
     if (!form.full_name.trim() || !form.email.trim() || !form.password.trim()) return;
@@ -101,6 +113,60 @@ export const AdminAccountCreator = () => {
       hostel_id: HOSTEL_OPTIONS[6].id,
     });
     setTimeout(() => setSuccessMsg(null), 4000);
+  };
+
+  const handleOpenEdit = (acc) => {
+    setEditingAdmin(acc);
+    setEditForm({
+      id: acc.id,
+      full_name: acc.full_name || '',
+      email: acc.email || '',
+      password: acc.password || '',
+      phone: acc.phone || '',
+      role: acc.role || 'hostel_admin',
+      hostel_id: acc.hostel_id || HOSTEL_OPTIONS[0].id,
+    });
+  };
+
+  const handleSaveEdit = (e) => {
+    e.preventDefault();
+    if (!editForm.full_name.trim() || !editForm.email.trim() || !editForm.password.trim()) return;
+
+    const selectedHostel = HOSTEL_OPTIONS.find((h) => h.id === editForm.hostel_id) || HOSTEL_OPTIONS[0];
+
+    const updated = accounts.map((acc) => {
+      if (acc.id === editForm.id) {
+        return {
+          ...acc,
+          full_name: editForm.full_name.trim(),
+          email: editForm.email.trim().toLowerCase(),
+          password: editForm.password.trim(),
+          phone: editForm.phone.trim() || '+91 98765 00000',
+          role: editForm.role,
+          roleLabel: editForm.role === 'hostel_admin' ? 'Hostel Warden' : 'Mess Caterer',
+          hostel_name: selectedHostel.name,
+          hostel_id: selectedHostel.id,
+          data: {
+            ...acc.data,
+            full_name: editForm.full_name.trim(),
+            role: editForm.role,
+            hostel_name: selectedHostel.name,
+            hostel_id: selectedHostel.id,
+            phone: editForm.phone.trim() || '+91 98765 00000',
+          }
+        };
+      }
+      return acc;
+    });
+
+    setAccounts(updated);
+    try {
+      localStorage.setItem('iterp_custom_admins', JSON.stringify(updated));
+    } catch (e) {}
+
+    setSuccessMsg(`✓ Successfully updated ${editForm.full_name}'s credentials!`);
+    setEditingAdmin(null);
+    setTimeout(() => setSuccessMsg(null), 3500);
   };
 
   const handleDelete = (id) => {
@@ -191,7 +257,7 @@ export const AdminAccountCreator = () => {
                 value={form.full_name}
                 onChange={(e) => setForm({ ...form, full_name: e.target.value })}
                 placeholder={form.role === 'hostel_admin' ? 'Dr. Ramesh Sahu (Warden)' : 'Annapurna Caterers (Mess Admin)'}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 font-medium"
               />
             </div>
 
@@ -314,10 +380,10 @@ export const AdminAccountCreator = () => {
             >
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-extrabold text-slate-900 dark:text-white text-sm">{acc.full_name}</span>
                     <span
-                      className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold border ${
+                      className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold border shrink-0 ${
                         acc.role === 'hostel_admin'
                           ? 'bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border-purple-200 dark:border-purple-800'
                           : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
@@ -332,7 +398,17 @@ export const AdminAccountCreator = () => {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {/* Edit Admin Account Button */}
+                  <button
+                    onClick={() => handleOpenEdit(acc)}
+                    title="Edit Admin Credentials"
+                    className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-slate-600 dark:text-slate-300 hover:text-indigo-600 transition-colors flex items-center gap-1 text-xs font-bold"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span>Edit</span>
+                  </button>
+
                   <button
                     onClick={() => handleCopy(acc)}
                     title="Copy Login Credentials"
@@ -340,6 +416,7 @@ export const AdminAccountCreator = () => {
                   >
                     {copiedEmail === acc.id ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                   </button>
+
                   <button
                     onClick={() => handleDelete(acc.id)}
                     title="Revoke / Delete Account"
@@ -371,7 +448,149 @@ export const AdminAccountCreator = () => {
           ))}
         </div>
       </div>
+
+      {/* ── Edit Admin Account Modal ── */}
+      {editingAdmin && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+          <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 flex items-center justify-center">
+                  <Key className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">
+                    Edit Admin Account: {editForm.full_name}
+                  </h3>
+                  <p className="text-[11px] text-slate-500">Update warden/caterer role, assigned hostel, email and password</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setEditingAdmin(null)}
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={handleSaveEdit} className="p-5 space-y-4 text-xs">
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700 dark:text-slate-300">Admin Role Tier:</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditForm({ ...editForm, role: 'hostel_admin' })}
+                    className={`p-2.5 rounded-xl border flex items-center gap-2 transition-all ${
+                      editForm.role === 'hostel_admin'
+                        ? 'bg-purple-50 dark:bg-purple-950/40 border-purple-600 text-purple-700 dark:text-purple-300 font-bold shadow-sm'
+                        : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'
+                    }`}
+                  >
+                    <ShieldCheck className="w-4 h-4 text-purple-500" />
+                    <span>Hostel Warden</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setEditForm({ ...editForm, role: 'mess_admin' })}
+                    className={`p-2.5 rounded-xl border flex items-center gap-2 transition-all ${
+                      editForm.role === 'mess_admin'
+                        ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-600 text-emerald-700 dark:text-emerald-300 font-bold shadow-sm'
+                        : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'
+                    }`}
+                  >
+                    <ChefHat className="w-4 h-4 text-emerald-500" />
+                    <span>Mess Caterer</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1 sm:col-span-2">
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Officer / Caterer Full Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={editForm.full_name}
+                    onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 font-bold"
+                  />
+                </div>
+
+                <div className="space-y-1 sm:col-span-2">
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Assigned Hostel Building</label>
+                  <select
+                    value={editForm.hostel_id}
+                    onChange={(e) => setEditForm({ ...editForm, hostel_id: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 font-semibold"
+                  >
+                    {HOSTEL_OPTIONS.map((h) => (
+                      <option key={h.id} value={h.id}>
+                        {h.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700 dark:text-slate-300">User ID / Login Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={editForm.email}
+                    onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 font-mono font-bold"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Password</label>
+                  <input
+                    type="text"
+                    required
+                    value={editForm.password}
+                    onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 font-mono font-bold text-amber-500"
+                  />
+                </div>
+
+                <div className="space-y-1 sm:col-span-2">
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Contact Number</label>
+                  <input
+                    type="text"
+                    value={editForm.phone}
+                    onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Modal Actions */}
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setEditingAdmin(null)}
+                  className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors shadow-sm flex items-center gap-1.5"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  <span>Save Changes</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 export default AdminAccountCreator;
+

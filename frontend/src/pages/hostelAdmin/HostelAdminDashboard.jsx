@@ -12,6 +12,8 @@ import { useAuth } from '../../hooks/useAuth';
 import { WeeklyMenu } from '../../components/messAdmin/menu/WeeklyMenu';
 import { FeedbackReviewExplorer } from '../../components/common/FeedbackReviewExplorer';
 import { MessCounterQR } from '../../components/messAdmin/attendance/MessCounterQR';
+import { LiveHostelTimetable } from '../../components/hostelAdmin/LiveHostelTimetable';
+import { HostelProfile } from './HostelProfile';
 import { getCurrentMeal } from '../../utils/dateUtils';
 import { Link } from 'react-router-dom';
 
@@ -37,7 +39,7 @@ export const HostelAdminDashboard = () => {
   const hostelName = user?.hostel_name || 'BH-7 (Boys Hostel 7)';
   const activeMeal = getCurrentMeal() || 'lunch';
 
-  const [activeTab, setActiveTab] = useState('attendance'); // 'attendance' | 'timetable' | 'feedback' | 'compliments'
+  const [activeTab, setActiveTab] = useState('attendance'); // 'attendance' | 'timetable' | 'profile' | 'feedback' | 'compliments'
   const [graphPeriod, setGraphPeriod] = useState('day'); // 'day' | 'week'
 
   const stats = [
@@ -72,6 +74,13 @@ export const HostelAdminDashboard = () => {
           </div>
 
           <div className="flex items-center gap-2.5 self-start md:self-auto">
+            <Link
+              to="/hostel-admin/profile"
+              className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition-all flex items-center gap-1.5 shrink-0"
+            >
+              <Building2 className="w-3.5 h-3.5 text-amber-300" />
+              <span>Hostel Profile</span>
+            </Link>
             <Link
               to="/hostel-admin/attendance"
               className="px-4 py-2.5 rounded-xl bg-white text-indigo-900 text-xs font-extrabold hover:bg-indigo-50 shadow-md transition-all flex items-center gap-1.5 shrink-0"
@@ -126,7 +135,19 @@ export const HostelAdminDashboard = () => {
             }`}
           >
             <Calendar className="w-3.5 h-3.5" />
-            <span>7-Day Menu Timetable (Editable)</span>
+            <span>Live Timetable & Weekly Menu (Editable)</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('profile')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
+              activeTab === 'profile'
+                ? 'bg-amber-600 text-white border-amber-600 shadow-md shadow-amber-600/20'
+                : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-amber-300'
+            }`}
+          >
+            <Building2 className="w-3.5 h-3.5" />
+            <span>Hostel Profile & Warden Info</span>
           </button>
 
           <button
@@ -258,9 +279,12 @@ export const HostelAdminDashboard = () => {
         </div>
       )}
 
-      {/* Tab 1: 7-Day Timetable with Warden Edit Permissions */}
+      {/* Tab 1: Live & 7-Day Timetable with Warden Edit Permissions */}
       {activeTab === 'timetable' && (
-        <div className="space-y-4 animate-fade-in">
+        <div className="space-y-6 animate-fade-in">
+          {/* Live Active Meal Card */}
+          <LiveHostelTimetable hostelName={hostelName} />
+
           <div className="p-4 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-800/40 flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-indigo-900 dark:text-indigo-200 font-semibold">
               <Sparkles className="w-4 h-4 text-indigo-500" />
@@ -275,6 +299,13 @@ export const HostelAdminDashboard = () => {
           </div>
 
           <WeeklyMenu />
+        </div>
+      )}
+
+      {/* Tab 2: Hostel Profile & Warden Contacts (Editable) */}
+      {activeTab === 'profile' && (
+        <div className="space-y-4 animate-fade-in">
+          <HostelProfile />
         </div>
       )}
 

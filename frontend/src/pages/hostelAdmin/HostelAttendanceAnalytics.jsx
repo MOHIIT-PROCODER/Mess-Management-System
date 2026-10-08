@@ -44,12 +44,28 @@ const MONTHLY_DATA = Array.from({ length: 30 }, (_, i) => {
   };
 });
 
+// ── 12-Month (1 Year Past) Historical Data for BH-7 ─────────
+const YEARLY_PAST_DATA = [
+  { month: 'Oct 2025', totalMeals: 44800, turnoutRate: 91, avgBreakfast: 388, avgLunch: 412, avgDinner: 420 },
+  { month: 'Nov 2025', totalMeals: 45200, turnoutRate: 92, avgBreakfast: 390, avgLunch: 415, avgDinner: 422 },
+  { month: 'Dec 2025', totalMeals: 43600, turnoutRate: 89, avgBreakfast: 375, avgLunch: 405, avgDinner: 410 },
+  { month: 'Jan 2026', totalMeals: 46100, turnoutRate: 93, avgBreakfast: 395, avgLunch: 420, avgDinner: 428 },
+  { month: 'Feb 2026', totalMeals: 44100, turnoutRate: 92, avgBreakfast: 392, avgLunch: 418, avgDinner: 424 },
+  { month: 'Mar 2026', totalMeals: 45900, turnoutRate: 93, avgBreakfast: 394, avgLunch: 422, avgDinner: 426 },
+  { month: 'Apr 2026', totalMeals: 44700, turnoutRate: 91, avgBreakfast: 386, avgLunch: 414, avgDinner: 419 },
+  { month: 'May 2026', totalMeals: 42300, turnoutRate: 86, avgBreakfast: 360, avgLunch: 395, avgDinner: 402 },
+  { month: 'Jun 2026', totalMeals: 41800, turnoutRate: 85, avgBreakfast: 355, avgLunch: 390, avgDinner: 398 },
+  { month: 'Jul 2026', totalMeals: 46500, turnoutRate: 94, avgBreakfast: 398, avgLunch: 426, avgDinner: 432 },
+  { month: 'Aug 2026', totalMeals: 47100, turnoutRate: 95, avgBreakfast: 402, avgLunch: 430, avgDinner: 435 },
+  { month: 'Sep 2026', totalMeals: 46800, turnoutRate: 94, avgBreakfast: 399, avgLunch: 428, avgDinner: 433 },
+];
+
 export const HostelAttendanceAnalytics = () => {
   const { user } = useAuth();
   const hostelName = user?.hostel_name || 'BH-7 (Boys Hostel 7)';
   const activeMeal = getCurrentMeal() || 'lunch';
 
-  const [period, setPeriod] = useState('day'); // 'day' | 'week' | 'month'
+  const [period, setPeriod] = useState('day'); // 'day' | 'week' | 'month' | 'year'
   const [liveCount, setLiveCount] = useState(418);
   const [manualRoll, setManualRoll] = useState('');
   const [checkInMsg, setCheckInMsg] = useState(null);
@@ -99,7 +115,7 @@ export const HostelAttendanceAnalytics = () => {
               {hostelName} Attendance & Live Headcount
             </h1>
             <p className="text-emerald-100 text-xs md:text-sm max-w-2xl">
-              Track live student turnout per meal, scan student badges, generate entrance counter tokens, and view comprehensive daily, weekly, and monthly attendance graphs.
+              Track live student turnout per meal, scan student badges, generate entrance counter tokens, and view comprehensive daily, weekly, monthly, and 1-year past attendance details.
             </p>
           </div>
 
@@ -135,11 +151,11 @@ export const HostelAttendanceAnalytics = () => {
         </div>
 
         <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
-          <span className="text-xs font-bold text-slate-500">Weekly Average Turnout</span>
+          <span className="text-xs font-bold text-slate-500">Annual Meals Served (1 Year)</span>
           <div className="text-xl font-extrabold text-slate-900 dark:text-white">
-            91.4% <span className="text-xs text-slate-400 font-normal">Pace</span>
+            538,900 <span className="text-xs text-slate-400 font-normal">Meals</span>
           </div>
-          <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">1,535 meals/day avg</p>
+          <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">91.8% Past 12M Average</p>
         </div>
 
         <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-1">
@@ -160,24 +176,24 @@ export const HostelAttendanceAnalytics = () => {
               <span>{hostelName} Attendance Analytics & Consumption Graphs</span>
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Filter by <strong>1 Day (Per Meal)</strong>, <strong>7-Day Week</strong>, or <strong>30-Day Month</strong>
+              Filter by <strong>1 Day (Per Meal)</strong>, <strong>7-Day Week</strong>, <strong>30-Day Month</strong>, or <strong>Past 1 Year (12 Months)</strong>
             </p>
           </div>
 
-          <div className="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 text-xs">
+          <div className="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 text-xs font-bold">
             <button
               onClick={() => setPeriod('day')}
-              className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-lg transition-all ${
                 period === 'day'
                   ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              Today (1 Day / 4 Meals)
+              Today (1 Day)
             </button>
             <button
               onClick={() => setPeriod('week')}
-              className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-lg transition-all ${
                 period === 'week'
                   ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -187,13 +203,23 @@ export const HostelAttendanceAnalytics = () => {
             </button>
             <button
               onClick={() => setPeriod('month')}
-              className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-lg transition-all ${
                 period === 'month'
                   ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               Monthly (30 Days)
+            </button>
+            <button
+              onClick={() => setPeriod('year')}
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                period === 'year'
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              Past 1 Year (12 Months)
             </button>
           </div>
         </div>
@@ -287,6 +313,30 @@ export const HostelAttendanceAnalytics = () => {
             <p className="text-center text-xs text-slate-500">
               📈 30-Day Total Meals Served in {hostelName}: <strong>45,820 Meals</strong> (Average 91.6% attendance)
             </p>
+          </div>
+        )}
+
+        {period === 'year' && (
+          <div className="space-y-4">
+            <div className="h-72 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={YEARLY_PAST_DATA} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
+                  <XAxis dataKey="month" tick={{ fill: '#64748b', fontSize: 11, fontWeight: 600 }} />
+                  <YAxis domain={[35000, 50000]} tick={{ fill: '#64748b', fontSize: 11 }} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#0f172a', borderRadius: '12px', border: '1px solid #334155', color: '#fff', fontSize: '12px' }}
+                    formatter={(val, name) => [`${val.toLocaleString()} Meals`, 'Monthly Attendance']}
+                  />
+                  <Legend />
+                  <Bar dataKey="totalMeals" fill="#10b981" radius={[6, 6, 0, 0]} name="Total Meals Served in Month" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between">
+              <span>📅 Past 1 Year Total Meals Served: <strong className="text-slate-900 dark:text-white">538,900 Meals</strong></span>
+              <span>Average Annual Turnout: <strong className="text-emerald-500">91.8%</strong></span>
+            </div>
           </div>
         )}
       </div>

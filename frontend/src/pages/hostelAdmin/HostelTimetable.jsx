@@ -1,7 +1,8 @@
 import React from 'react';
-import { Calendar, Edit3, ShieldCheck, Sparkles } from 'lucide-react';
+import { Calendar, Edit3, ShieldCheck, Sparkles, Clock, Utensils } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { WeeklyMenu } from '../../components/messAdmin/menu/WeeklyMenu';
+import { LiveHostelTimetable } from '../../components/hostelAdmin/LiveHostelTimetable';
 
 export const HostelTimetable = () => {
   const { user } = useAuth();
@@ -9,14 +10,15 @@ export const HostelTimetable = () => {
 
   return (
     <div className="space-y-6">
+      {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
             <Calendar className="w-6 h-6 text-indigo-500" />
-            <span>{hostelName} 7-Day Menu Timetable</span>
+            <span>{hostelName} Dining Timetable & Menu Manager</span>
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Wardens can review and directly edit the weekly cook schedule, dishes, meal times, and special feast menus.
+            Real-time live dining session monitor and full 7-day cook timetable with interactive warden edit permissions.
           </p>
         </div>
 
@@ -28,8 +30,21 @@ export const HostelTimetable = () => {
         </div>
       </div>
 
-      {/* Reusable Interactive 7-Day Weekly Menu Editor */}
-      <WeeklyMenu />
+      {/* 1. Live Time Table Active Slot Card */}
+      <LiveHostelTimetable hostelName={hostelName} />
+
+      {/* 2. 7-Day Full Interactive Weekly Timetable Editor */}
+      <div className="space-y-3 pt-2">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-indigo-500" />
+            <span>7-Day Full Weekly Timetable Schedule</span>
+          </h2>
+          <span className="text-xs text-slate-500">Click any day or meal card below to edit dishes and timings</span>
+        </div>
+
+        <WeeklyMenu />
+      </div>
     </div>
   );
 };

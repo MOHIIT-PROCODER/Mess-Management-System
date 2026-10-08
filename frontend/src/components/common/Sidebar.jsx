@@ -23,10 +23,11 @@ export const Sidebar = () => {
   const hostelAdminLinks = [
     { to: '/hostel-admin', label: 'Warden Dashboard', icon: LayoutDashboard },
     { to: '/hostel-admin/attendance', label: 'Live QR & Attendance', icon: QrCode },
-    { to: '/hostel-admin/timetable', label: 'Weekly Timetable', icon: Calendar },
+    { to: '/hostel-admin/timetable', label: 'Live & Weekly Timetable', icon: Calendar },
     { to: '/hostel-admin/feedback', label: 'Student Feedback', icon: MessageSquare },
     { to: '/hostel-admin/compliments', label: 'Chef Compliments', icon: Heart },
-    { to: '/hostel-admin/students', label: 'Hostel Residents', icon: User }
+    { to: '/hostel-admin/students', label: 'Hostel Residents', icon: User },
+    { to: '/hostel-admin/profile', label: 'Hostel Profile', icon: Building }
   ];
 
   const messAdminLinks = [

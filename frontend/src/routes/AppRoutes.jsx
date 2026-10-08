@@ -32,6 +32,7 @@ import { HostelTimetable } from '../pages/hostelAdmin/HostelTimetable';
 import { HostelFeedback } from '../pages/hostelAdmin/HostelFeedback';
 import { HostelCompliments } from '../pages/hostelAdmin/HostelCompliments';
 import { HostelStudents } from '../pages/hostelAdmin/HostelStudents';
+import { HostelProfile } from '../pages/hostelAdmin/HostelProfile';
 
 // Mess Admin Pages
 import { MessAdminDashboard } from '../pages/messAdmin/MessAdminDashboard';
@@ -110,6 +111,7 @@ export const AppRoutes = () => {
         <Route path="feedback" element={<HostelFeedback />} />
         <Route path="compliments" element={<HostelCompliments />} />
         <Route path="students" element={<HostelStudents />} />
+        <Route path="profile" element={<HostelProfile />} />
       </Route>
 
       {/* Mess Admin Portal Routes (Restricted strictly to Mess Admin, Hostel Admin and Super Admin) */}
