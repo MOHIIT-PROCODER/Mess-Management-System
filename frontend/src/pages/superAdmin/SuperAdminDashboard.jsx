@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { HostelManager } from '../../components/superAdmin/HostelManager';
-import { MessAdminManager } from '../../components/superAdmin/MessAdminManager';
+import { AdminAccountCreator } from '../../components/superAdmin/AdminAccountCreator';
 import { DynamicBarcodePass } from '../../components/common/DynamicBarcodePass';
 import { UniversalScanner } from '../../components/common/UniversalScanner';
 import { QrCode, Camera, Shield, Barcode, User, BarChart3, Calendar, Building } from 'lucide-react';
@@ -73,14 +72,14 @@ export const SuperAdminDashboard = () => {
         </Link>
 
         <Link
-          to="/superadmin/admins"
+          to="/superadmin/hostels"
           className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 shadow-sm transition-all group"
         >
           <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
             <Building className="w-4 h-4" />
           </div>
-          <p className="font-bold text-slate-900 dark:text-white text-xs">Admin Accounts</p>
-          <p className="text-[11px] text-slate-500 mt-0.5">Wardens & Caterers</p>
+          <p className="font-bold text-slate-900 dark:text-white text-xs">Hostels & Admins</p>
+          <p className="text-[11px] text-slate-500 mt-0.5">10 Blocks & Wardens</p>
         </Link>
 
         <Link
@@ -134,8 +133,7 @@ export const SuperAdminDashboard = () => {
         </div>
       </div>
 
-      <HostelManager />
-      <MessAdminManager />
+      <AdminAccountCreator />
     </div>
   );
 };

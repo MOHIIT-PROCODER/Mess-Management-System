@@ -146,7 +146,7 @@ export const AppRoutes = () => {
         <Route path="attendance" element={<CampusAttendanceAnalytics />} />
         <Route path="menus" element={<CampusFoodTimetables />} />
         <Route path="hostels" element={<HostelManagement />} />
-        <Route path="admins" element={<MessAdminManagement />} />
+        <Route path="admins" element={<HostelManagement />} />
         <Route path="feedback" element={<SuperAdminFeedback />} />
         <Route path="profile" element={<SuperAdminProfile />} />
       </Route>

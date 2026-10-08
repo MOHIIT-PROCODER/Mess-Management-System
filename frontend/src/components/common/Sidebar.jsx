@@ -42,8 +42,7 @@ export const Sidebar = () => {
     { to: '/superadmin', label: 'System Overview', icon: LayoutDashboard },
     { to: '/superadmin/attendance', label: 'Campus Attendance Graphs', icon: BarChart3 },
     { to: '/superadmin/menus', label: '7-Day Food Menus', icon: Calendar },
-    { to: '/superadmin/admins', label: 'Wardens & Mess Admins', icon: User },
-    { to: '/superadmin/hostels', label: 'Hostel Buildings', icon: Building },
+    { to: '/superadmin/hostels', label: 'Hostels & Admin Accounts', icon: Building },
     { to: '/superadmin/feedback', label: 'Student Feedback', icon: MessageSquare },
     { to: '/superadmin/profile', label: 'Admin Profile', icon: User }
   ];
