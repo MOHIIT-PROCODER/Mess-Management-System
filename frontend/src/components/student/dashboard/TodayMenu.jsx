@@ -100,30 +100,31 @@ export const TodayMenu = ({ menuItems = [] }) => {
   return (
     <div className="space-y-4">
       {/* Header with Title, Day Picker and View Toggle */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900/90 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div>
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400">
-              <CalendarDays className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <span>7-Day Mess Menu Schedule</span>
-                {isSelectedToday && (
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 font-semibold border border-emerald-300 dark:border-emerald-800">
-                    Live Today
-                  </span>
-                )}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white dark:bg-slate-900/90 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="flex items-start sm:items-center gap-3">
+          <div className="p-2.5 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 shrink-0">
+            <CalendarDays className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+                7-Day Mess Menu Schedule
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Viewing schedule for <span className="font-bold text-indigo-600 dark:text-indigo-400">{selectedDay}</span>
-              </p>
+              {isSelectedToday && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold border border-emerald-500/30 whitespace-nowrap shrink-0 shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Live Today</span>
+                </span>
+              )}
             </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Viewing menu schedule for <span className="font-bold text-indigo-600 dark:text-indigo-400">{selectedDay}</span>
+            </p>
           </div>
         </div>
 
         {/* Action Buttons: Day vs 7-Day Full View */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
           <div className="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700">
             <button
               onClick={() => setViewMode('day')}
@@ -149,7 +150,7 @@ export const TodayMenu = ({ menuItems = [] }) => {
 
           <Link
             to="/student/menu"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors border border-indigo-200 dark:border-indigo-800/40"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors border border-indigo-200 dark:border-indigo-800/40 shrink-0"
           >
             <span>Full Table</span>
             <ChevronRight className="w-3.5 h-3.5" />
