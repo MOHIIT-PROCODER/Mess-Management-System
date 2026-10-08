@@ -27,10 +27,10 @@ import { Profile } from '../pages/student/Profile';
 
 // Hostel Admin (Warden) Pages
 import { HostelAdminDashboard } from '../pages/hostelAdmin/HostelAdminDashboard';
+import { HostelTimetable } from '../pages/hostelAdmin/HostelTimetable';
+import { HostelFeedback } from '../pages/hostelAdmin/HostelFeedback';
+import { HostelCompliments } from '../pages/hostelAdmin/HostelCompliments';
 import { HostelStudents } from '../pages/hostelAdmin/HostelStudents';
-import { HostelMessOverview } from '../pages/hostelAdmin/HostelMessOverview';
-import { HostelComplaints } from '../pages/hostelAdmin/HostelComplaints';
-import { HostelRebates } from '../pages/hostelAdmin/HostelRebates';
 
 // Mess Admin Pages
 import { MessAdminDashboard } from '../pages/messAdmin/MessAdminDashboard';
@@ -101,10 +101,10 @@ export const AppRoutes = () => {
         }
       >
         <Route index element={<HostelAdminDashboard />} />
+        <Route path="timetable" element={<HostelTimetable />} />
+        <Route path="feedback" element={<HostelFeedback />} />
+        <Route path="compliments" element={<HostelCompliments />} />
         <Route path="students" element={<HostelStudents />} />
-        <Route path="mess-overview" element={<HostelMessOverview />} />
-        <Route path="complaints" element={<HostelComplaints />} />
-        <Route path="rebates" element={<HostelRebates />} />
       </Route>
 
       {/* Mess Admin Portal Routes (Restricted strictly to Mess Admin, Hostel Admin and Super Admin) */}

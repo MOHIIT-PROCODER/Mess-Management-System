@@ -22,10 +22,10 @@ export const Sidebar = () => {
 
   const hostelAdminLinks = [
     { to: '/hostel-admin', label: 'Warden Dashboard', icon: LayoutDashboard },
-    { to: '/hostel-admin/students', label: 'Hostel Residents', icon: User },
-    { to: '/hostel-admin/mess-overview', label: 'Mess Operations', icon: Calendar },
-    { to: '/hostel-admin/complaints', label: 'Grievances & Actions', icon: MessageSquare },
-    { to: '/hostel-admin/rebates', label: 'Rebate Approvals', icon: FileText }
+    { to: '/hostel-admin/timetable', label: 'Weekly Timetable', icon: Calendar },
+    { to: '/hostel-admin/feedback', label: 'Student Feedback', icon: MessageSquare },
+    { to: '/hostel-admin/compliments', label: 'Chef Compliments', icon: Heart },
+    { to: '/hostel-admin/students', label: 'Hostel Residents', icon: User }
   ];
 
   const messAdminLinks = [
